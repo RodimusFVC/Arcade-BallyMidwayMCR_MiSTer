@@ -1,0 +1,976 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Language" content="en-us">
+<meta name="description" content="Video arcade game parts, supplies, repair and technical information">
+<meta name="keywords" content="arcade,classic,game,repair,logic board,repairs,games,double donkey kong,pac-man,pacman,galaga,coin-op">
+<link rel="stylesheet" href="FAQ_%20Bally%20Midway%20MCR%20System%20Games_files/default_uMJM.css" type="text/css">
+<title>FAQ: Bally Midway MCR System Games</title>
+
+</head>
+
+<body bgcolor="#2963A9" text="#080808">
+
+<!-- link="#004080" vlink="#004040" alink="#004040" -->
+<!-- p align="center" class="address"><img src="../images/mac.gif" alt="MikesArcade.com" width="348" height="78"><br>Coin-op Video Arcade Technical Information Archive -->
+<center>
+<table cellpadding="0" cellspacing="0" width="794">
+	<tbody><tr>
+		<td width="100%" colspan="4" bgcolor="#FFFFFF">
+		<table cellspacing="0" cellpadding="5" width="100%" border="0">
+			<tbody><tr>
+				<td>
+				<img src="FAQ_%20Bally%20Midway%20MCR%20System%20Games_files/def_logo_uMJM.gif" border="0" width="226" height="42" alt="MikesArcade.com"></td>
+				<td valign="bottom" align="right" class="address">Coin-op Video 
+				Arcade Technical Information Archive</td>
+			</tr>
+		</tbody></table>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="4">
+		<table width="100%" cellspacing="0" cellpadding="0">
+			<tbody><tr>
+				<th class="ONMBarSel" width="100%">&nbsp;
+				<a class="menu" href="https://www.mikesarcade.com/arcade/index.html">Home</a>&nbsp; |&nbsp;
+				<a class="menu" href="https://www.mikesarcade.com/arcade/repair.html">Repair Logs</a>&nbsp; 
+				|&nbsp; <a class="menu" href="https://www.mikesarcade.com/arcade/manuals.html">Game Manuals</a>&nbsp; 
+				|&nbsp; <a class="menu" href="https://www.mikesarcade.com/arcade/monitors.html">Monitor Manuals</a>&nbsp; 
+				|&nbsp; <a class="menu" href="https://www.mikesarcade.com/cgi-bin/store.pl">Online Store</a>&nbsp; 
+				|&nbsp; <a class="menu" href="https://www.mikesarcade.com/arcade/links.html">Links</a>&nbsp; 
+				|&nbsp;	<a class="menu" href="https://www.mikesarcade.com/cgi-bin/store.pl?action=url&amp;page=contact.html">Contact Us</a> </th>
+			</tr>
+		</tbody></table>
+		</td>
+	</tr>
+	<tr valign="top">
+		<td width="180" class="light">
+		<table border="0" width="100%" cellpadding="2">
+			<tbody><tr>
+				<th class="sidebar" width="100%">Technical Info</th>
+			</tr>
+			<tr>
+				<td>&nbsp; <a href="https://www.mikesarcade.com/arcade/repair.html">Repair Logs</a><br>
+&nbsp; <a href="https://www.mikesarcade.com/arcade/pacfix.html">Pacman fixes</a><br>
+&nbsp; <a href="https://www.mikesarcade.com/arcade/manuals.html">Manuals &amp; Schematics</a><br>
+&nbsp; <a href="https://www.mikesarcade.com/arcade/monitors.html">Monitor Manuals</a><br>
+&nbsp; <a href="https://www.mikesarcade.com/arcade/NintendoList.html">Nintendo Game List</a><br>
+&nbsp; <a href="https://www.mikesarcade.com/arcade/njoysticks.html">Nintendo Joysticks</a><br>
+&nbsp; <a href="https://www.mikesarcade.com/arcade/nbuttons.html">Nintendo Buttons</a><br>
+&nbsp; <a href="https://www.mikesarcade.com/arcade/promlink.html">Data I/O Promlink 6.10</a> </td>
+			</tr>
+			<tr>
+				<th class="sidebar">Spies Wiretap Archives</th>
+			</tr>
+			<tr>
+				<td>&nbsp; <a href="https://www.mikesarcade.com/cgi-bin/spies.cgi">Coin-op Video Game List</a><br>
+&nbsp; <a href="https://www.mikesarcade.com/cgi-bin/spies.cgi?action=url&amp;type=conv&amp;page=conversions.html">Game Conversions</a><br>
+&nbsp; <a href="https://www.mikesarcade.com/cgi-bin/spies.cgi?action=url&amp;type=info&amp;page=mixedbag.html">The Mixed Bag</a><br>
+&nbsp; <a href="https://www.mikesarcade.com/cgi-bin/spies.cgi?action=info">PCB Pinouts and DIPs</a> </td>
+			</tr>
+			<tr>
+				<th class="sidebar">PDF Game Artwork</th>
+			</tr>
+			<tr>
+				<td>&nbsp; <a href="https://www.mikesarcade.com/arcade/labels.html">Coin door inserts, etc.</a><br>
+&nbsp; <a href="https://www.mikesarcade.com/arcade/cards.html">Instructions cards</a><br>
+&nbsp; <a href="https://www.mikesarcade.com/arcade/opsheets.html">Operation Sheets</a><br>
+&nbsp; <a href="https://www.mikesarcade.com/arcade/cp-and-bezel.html">Control Panel &amp; Bezels</a> </td>
+			</tr>
+			<tr>
+				<th class="sidebar">Jukebox</th>
+			</tr>
+			<tr>
+				<td>&nbsp; <a href="https://www.mikesarcade.com/arcade/titlestrips.html">Title Strip Creator</a><br>
+				</td>
+			</tr>
+			<tr>
+				<th class="sidebar">Tutorials</th>
+			</tr>
+			<tr>
+				<td>&nbsp; <a href="https://www.mikesarcade.com/arcade/components.html">Component markings...</a><br>
+&nbsp; <a href="https://www.mikesarcade.com/arcade/crating.html">Crating a game</a><br>
+&nbsp; <a href="https://www.mikesarcade.com/arcade/cabplans.html">Build your own cabinet</a> </td>
+			</tr>
+			<tr>
+				<th class="sidebar">Board Upgrades</th>
+			</tr>
+			<tr>
+				<td>&nbsp;
+				<a href="https://www.mikesarcade.com/cgi-bin/store.pl?action=url&amp;page=prod/ddk/ddk.html">Double 
+				Donkey Kong</a> </td>
+			</tr>
+			<tr>
+				<th class="sidebar">Wanted</th>
+			</tr>
+			<tr>
+				<td>&nbsp; <a href="https://www.mikesarcade.com/arcade/wanted.html">Items I'm looking for</a>
+				</td>
+			</tr>
+			<tr>
+				<th class="sidebar">Miscellaneous</th>
+			</tr>
+			<tr>
+				<td>
+				<!-- &nbsp;&nbsp;<a href="http://www.vaps.org/members/ut/mhaaland@mikesarcade.com.html">My Collection</a><br> -->&nbsp;
+				<a href="https://www.mikesarcade.com/arcade/links.html">Links</a><br>
+&nbsp; <a href="https://www.mikesarcade.com/cgi-bin/store.pl?action=url&amp;page=contact.html">Contact Us</a>
+				</td>
+			</tr>
+			<tr>
+				<th class="sidebar">Certifications</th>
+			</tr>
+			<tr>
+				<td>&nbsp; <a href="https://validator.w3.org/check?uri=referer">
+				<img border="0" src="FAQ_%20Bally%20Midway%20MCR%20System%20Games_files/valid-html401-blue_uMJM.png" alt="Valid HTML 4.01!" height="31" width="88"></a>
+				</td>
+			</tr>
+		</tbody></table>
+		</td>
+		<td class="verticalline" width="7" bgcolor="#FFFFFF">&nbsp; </td>
+		<td bgcolor="#FFFFFF" width="600">
+		<table width="600">
+			<tbody><tr>
+				<td>
+				<!-- CONTENT -->
+<pre> 
+                      *********************************
+                      Bally Midway MCR System Games FAQ
+
+                                 version 1.4
+
+                                   Writers
+                      Mark Jenison        Clay Cowgill
+                      *********************************
+
+******************
+NOTE - PLEASE READ
+******************
+
+I am looking for contributors to this FAQ.  There is a lot of missing
+information in here.  If you own an MCR boardset, please send me the
+following information:
+- Name of sound board (including part number, should be screened on the board)
+  Number of connectors on the sound board
+  Number of pins on each connector of the sound board
+- Name of CPU board (including part number)
+- Name of Video board (including part number)
+  Types of RAMS on the Video board (should be 8 or so socketed devices down
+  the middle)
+- Type of EPROMs on each board
+  Dates on the EPROM labels (if listed)
+
+Please send the information to: jenison@enteract.com, with the name of the
+game as the subject line.
+
+Thanks! - Mark Jenison
+***********************************
+
+   I. Introduction
+  II. The MCR system classes
+      A. CPU's
+         1. MCR (I)
+         2. MCR II
+         3. MCR III
+      B. Super Sound I/O
+      C. Video
+         1. Video Generator II
+         2. Video Generator III
+      D. Power supply
+      E. Misc
+         1. Audio Amps
+         2. Cassette mechanisms
+         3. Controls
+ III. Games
+      A. Kick/Kickman
+      B. Tron
+      C. Satan's Hollow
+      D. Tapper
+      E. Timber
+      F. Discs of Tron
+      G. Spy Hunter
+      H. Solar Fox
+      I. Two Tigers
+      J. Journey
+      K. NFL
+      L. Wacko
+      M. Demolition Derby
+      N. Sarge
+      O. Kozmik Krooz'r
+  IV. Game to board mapping
+   V. Related Documents
+  VI. Contributors
+ VII. Document History
+
+***************
+I. Introduction
+***************
+
+This document discusses the Bally Midway MCR system games, including MCR,
+MCR II and MCR III games.  This system was designed so that many different
+types of controllers and external peripherals (such as cassette decks, speech
+boards, lights, etc.) could be run on a common platforms.  This platform
+consisted of a sound I/O board, a CPU board, and a video generator board, and
+the same set of boards (in most cases) could play a different game with just
+simple EPROM swaps.
+
+***********************
+II. MCR System Classes
+***********************
+
+==========
+A. CPU's
+==========
+
+1. MCR (I)
+
+The MCR CPU Board (Midway part number A084-91399-A968) is a Z-80 based
+microcomputer consisting of EPROM program and graphics memory, general
+purpose SRAM, high speed RAM for video, a custom video timing generation
+system, and I/O subsystems and decoding.
+
+
+==================
+B. Super Sound I/O
+==================
+
+Super Sound I/O Overview:
+-------------------------
+The Bally Midway Super Sound I/O board is, as the name suggests, the input
+and output method for MCR series games, as well as the sound generator.
+
+The SSIO is a Z-80 based computer.  It runs at 2MHz from dividing down a
+16MHz clock.  The SSIO has 1K of SRAM, up to 16K of program ROM, access to
+over 48 lines of system I/O (buttons and the like), and 2 8910 sound
+generators.
+
+The SSIO is capable of reading input from both switches (like standard
+arcade buttons) and optical quadrature encoders (like a "spinner" knob such
+as used by Tempest, Arkanoid, TRON, etc.)
+
+Button inputs are read through 74LS244 data buffers with series resistors,
+protective capacitors, and 10K pull-up resistors on all input lines.  Some
+boards appear to have been intentionally altered in the field by removal of
+the .1uF caps and pullup resistors on the '244s.  (Anyone who knows the
+origin and details of this modification is encouraged to send the story to
+me!  -- clay@yahoo.com)
+
+Angle encoder boards (such as TRON's "spinner" knob) are read as parallel
+data from either J4 or J6 connections.  Quadrature signals from the knob
+are converted to parallel position data on the Angle Encoder Board, so the
+SSIO only needs to read the results with no other conversion required.
+
+Game specific settings are accomplished by adjusting one 10 DIP switch
+block (SW1).  SW1 contact #10 connects to the *uWAIT line, effectively
+pausing the game when in "on" position.
+
+
+SSIO Built in test mode:
+------------------------
+Low level SSIO test options are accomplished through setting on SW3.
+
+           |   SW#1      SW#2      SW#3      SW#4       SW#5-SW#8
+-----------+------------------------------------------------------
+Normal     |    OFF
+Operation  |
+           |
+SSIO       |    ON
+Diagnostic |
+-----------+------------------------------------------------------
+Normal     |              OFF
+Operation  |
+           |
+RAM/ROM    |              ON
+Test       |
+-----------+------------------------------------------------------
+Normal     |                        OFF
+Operation  |
+           |
+Oscillator |                        ON
+Test       |
+-----------+------------------------------------------------------
+Normal     |                                  OFF
+Operation  |
+           |
+Filter     |                                  ON
+Test       |
+
+For any of the test modes to be operational, SW3/SW#1 must be ON.  To test
+RAM/ROM, set SW3/SW#1 to ON, and SW3/SW#2 to ON and power up the board.  A
+steady "ON" LED #3 (in the lower left hand corner of the PCB) indicates
+proper operation.  A slow blinking LED #3 indicates a RAM error, a fast
+blinking LED #3 indicates a ROM error.  LED #3 is normally not lit during
+game operation.
+
+[Oscillator and Filter test needs to be documented...]
+
+There is a SW2 block documented in most schematics for the SSIO, but it
+appears to not be present on any of the PCB's I've seen.
+
+
+Differences from game to game:
+------------------------------
+As alluded to previously, the SSIO is a general purpose I/O board used
+across all the MCR series games with minor modifications from system to
+system.  As a general rule, the SSIO from different games may be safely
+swapped for testing purposes.
+
+Customization of the SSIO for a particular game is accomplished through
+four 4K EPROMs in locations A7-A10.  Two jumpers, JW1 and JW2 select
+different configurations for either 2732 or 2532 based EPROMs.  Note that
+simply swapping EPROMs without examining JW#1 and JW#2 for proper settings
+may not work!
+
+For 2532 EPROMs:  JW#1 open (cut), JW#2 present (shunt)
+For 2732 EPROMs:  JW#1 present (shunt), JW#2 open (cut)
+
+The number of sound ROMs used in a particular game varies, however they
+will always start filling the sockets in A7 to A10 order.  There should be
+no "gaps" in the order.  (EPROMs in positions A7 and A9 with an empty A8
+for example is probably not correct.)
+
+Some known configurations are listed below:
+
+Game                 Number of ROMs
+-----------------------------------
+Spy Hunter                 2
+TRON                       3
+Solar Fox                  3
+Satan's Hollow             3
+Two Tigers                 3
+Kick                       4
+Discs of TRON (EV)         4
+Discs of TRON (UR)         4
+
+SSIO Sound Generation:
+----------------------
+Stereo sound is generated in the SSIO by the use of two AY-3-8910 Sound
+Generator chips.  One chip (F7) drives the left channel and one chip (F6)
+drives the right. The design of the 8910 is from General Instruments (GI), as
+are most production units you see.  Yamaha also produced a pin compatible
+unit, the YM2149.  GI is no longer (they are now Microchip Technology, makers
+of the PIC series of microcontrollers), but the 8910 can still be had from
+many sources such as JDR Microdevices (www.jdr.com).
+
+Each 8910 contains 3 sound generators (which can be coupled with a white
+noise source) and two full 8 bit parallel ports, plus some extra I/O lines.
+The 8910 was used in the Atari ST series of computers (potential parts
+source here :-)). 
+
+The Bally Midway engineers did something a bit clever with the trusty old
+8910-- they used the extra I/O lines as outputs to control a vibrato/filter
+system and a stereo panning system, this results in the SSIO producing
+noticeably more interesting effects than a "vanilla" 8910.
+
+The panning system is not present on all boards and is typically found in
+MCR III based games like the "environmental" Discs of TRON and sit-down Spy
+Hunter.  Versions of the SSIO without panning are usually the
+A082-90913-x000 part number.  Versions with panning often appear to be
+A080-91657-x000.  Note that the panning boards were apparently used as
+"non-panning" boards simply by not stuffing the panning section with parts
+and adjusting some part values.  Boards such as the A082-90908-L000 can be
+converted to a panning version simply by filling in the missing components
+and adjusting some part values.  Do not attempt this without a copy of the
+schematics.
+
+SSIO ROMs for both panning and non-panning versions of a game appear to be
+identical.
+
+Audio amplification is done on a separate Amp board (the "Dual Power Amp"
+or "Dual Power Amp with Mixer", and similar parts.  Some games used
+additional sound production techniques such as a casette player (Journey),
+8-track casette player (Two Tigers),  stand alone music board (Spy Hunter,
+the 16MHz 68000 based "Cheap Squeak Deluxe"), and voice synthesis boards
+(Discs of TRON, the "Squak &amp; Talk" board).
+
+SSIO PCB numbers and variations:
+--------------------------------
+A082-90913-E000 SSIO, no panning (this seems to be the most common)
+A082-90913-G000 Same as above, but includes A3 (74LS273) for 2 players
+A082-90908-G000 SSIO, no panning, but has locations for pan components
+A082-90908-L000 Same as above, but uses a 74160 instead of a 74190
+A082-91657-A000 SSIO, with panning installed (seems to be least common)
+
+
+Common Failure Points on the SSIO:
+----------------------------------
+The SSIO seems to be a very sturdy design.  Some failures I have encountered:
+
+Bad chip sockets on A6 (RAM) and A7-A10 (ROM). (24pin sockets) **
+
+Some components seem prone to damage by rough handling-- lots of times
+470uF electrolytics CP1, CP13, CP47, and CP54 tend to break off.  They just
+help keep the +5V levels relatively ripple-free, but replace them anyway if
+in doubt. **
+
+According to a StarTech Journal entry, some of the early "Kick" boards had a
+flaw where CP34 was inserted with its polarity reversed.  The fix was to
+either turn it around or cut it off completely.
+
+The .047uF cap in the audio output section tends to break off sometimes as
+well.  (It's usually C139.) **
+
+LED #3 also seems to be missing a lot (broken off).
+
+SW4 (the reset switch to the Z-80) isn't very sturdy either. Sometimes
+it'll latch "closed" and cause a constant reset state in the game.  Test it
+with your multi-meter.
+
+Very early MCR games used SIPP-style sockets for the J1 and J2 connectors
+with solid core wire ribbon cables interconnecting the boards.  If you see
+these REPLACE THEM IMMEDIATELY.  They do really, truely, suck. **
+
+Also check for cold solder joints on JP1 and JP2.  Connecting and
+disconnecting the cables causes cracking in the old solder and reliability
+problems.
+
+Do you hate those 24 pin "ribbon" cables as much as I do?  I have a good
+trick to replace them-- use a 50 to 50 pin connector (like a SCSI cable)
+and go from the top of one header to the bottom of the other.  Remember
+that there's one pin left over (the SCSI cable is 25 pins wide-- not 24),
+be sure to put the spare pin on the same side on both end of the
+connection. (I got a great deal on 3 connector SCSI cable assemblies that
+work wonderfully for this, I have extras for sale if you need parts. -Clay)
+
+** (I have these for sale if you need parts. -Clay)
+
+Keep and eye on those DIP switches.  None of SW3's settings should be "on"
+during normal operation. Switch 10 on SW1 should always be "off" for normal
+operation.
+
+Clay Cowgill engineered a TEST ROM which tests exercises a lot of the
+devices on the SSIO board.  Contact either him or Mark Jenison for a copy
+of the ROM image.
+
+===============
+D. Power Supply
+===============
+
+The MCR power supply board comes in revisions A-D (as far as I've found).
+These boards are notorious for failure, mostly caused by the poor molex
+connections becoming corroded due to a leaky battery.
+
+Tom Wisnionski created an adapter that allows one to use a switching
+power supply instead of the original power supply.  
+
+The problem in the past with using switching power supplies in MCR games is
+that there is considerable "noise" on the power lines of most switchers,
+causing a loud hum to come from the speakers.
+
+=======
+E. Misc
+=======
+
+--------
+Controls
+--------
+
+Bally Midway's MCR games were special in that most of the games designed
+required unique controls.  This developers expanded the controls horizon,
+rather than limiting themselves to the simple joystick and button format
+of the era.
+
+Bally Midway MCR games had a lot of controls which you don't see often on
+other games.  The description of some of these controls follows.
+
+Trigger joystick -
+     A joystick which has a button built in.  This design left the player
+     with a free hand to work other controls.
+
+Tri-level encoder wheel -
+     This is not only an encoder wheel that goes left and right, but can be
+     pulled UP or DOWN.  Basically, the encoder wheel is stable, but the shaft
+     going through the wheel can be pulled up or down to press either of two
+     leaf switches.
+
+Bi-directional trackball (roller) -
+     A trackball which had an axis running through it, allowing it to only go
+     in two directions.  Basically just a fancy encoder wheel.
+
+Other examples of unique controls includes Spy Hunter's, Two Tigers' and
+Tapper's set up.
+
+Optical encoder boards
+----------------------
+
+There are several kinds of optical encoder boards that I've come
+across.
+
+1. Optical Encoder board
+2. Optical Encoder board Deluxe
+3. Optical Encoder board Deluxe II
+4. Angle Encoder board
+
+The board layouts are almost identical, but there is still a difference in
+pinouts and circuitry.  Also, I've seen different sized wheels on them.  The 
+Discs of Tron wheels are larger but have more slits in the encoder wheel.
+Zwackery and Demolition Derby both use smaller encoder wheels with bigger
+slits.
+
+Pinouts for Angle Encoder board
+-------------------------------
+ 1 - ??
+ 2 - ??
+ 3 - Q0
+ 4 - key
+ 5 - GND
+ 6 - Q3
+ 7 - Vcc (+5VDC)
+ 8 - Q1
+ 9 - Q2
+
+Pinouts for Optical Encoder board
+---------------------------------
+
+ 1 - +12VDC
+ 2 - GND
+ 3 - ??
+ 4 - D6
+ 5 - D5
+ 6 - D4
+ 7 - D3
+ 8 - D2
+ 9 - D1
+10 - D0
+11 - Key
+12 - ??
+13 - +5VDC
+
+Pinouts for Optical Encoder Deluxe II board
+-------------------------------------------
+
+ 1 - +12VDC
+ 2 - +12VDC
+ 3 - GND
+ 4 - GND
+ 5 - D7
+ 6 - D6
+ 7 - D5
+ 8 - D4
+ 9 - D3
+10 - D2
+11 - D1
+12 - D0
+13 - Key
+14 - OC (not) - GND if JW1 is present, otherwise pull up resistor to +5VDC
+15 - +5VDC
+16 - +5VDC
+
+*********
+IV. Games
+*********
+
+This is a list of games on the Bally Midway MCR system.  Each entry has a
+description of the game and controls it used.
+
+==============
+Kick / Kickman
+==============
+
+Kick is a game where a man with a pointy hat pedals back and forth on a
+unicycle, catching and/or popping balloons on his head.  Some rounds include
+Pac-Men, which you can catch to eat the balloons on his head for big bonus
+points.  If something you wanted to catch on your head drops too fast and gets
+buy you, you can kick it back up in the air (if you are close enough).  If the
+falling object hits the ground, your unicycle falls over, and you lose a turn.
+There are bonus rounds where you can pop balloons that are being thrown from
+windows.  The same people are also throwing bombs, which you must avoid.
+
+Kick was later changed to Kickman (hoping to draw in the Pac-Man crowd, I
+suppose).  The change from one to the other was minor; the marquee changed,
+the bonus rounds changed somewhat, and the CPU and video board changed.
+
+Kick/Kickman used a "mirrored" screen where the video displayed on the monitor
+is actually reflected up by a mirror.  If you play directly on a monitor,
+everything will be a "mirror image" of what it should be, including the
+bi-directional trackball.
+
+Controls: Bi-directional trackball, Kick, 1P, 2P buttons
+
+====
+TRON
+====
+
+Remember the movie TRON?  Well, Bally Midway had two design teams competing
+internally (although one was apparently set-up as a contractor) for the Tron
+contract.  One team went with a very cool vector game based on new technology.
+The other designed five games to be grouped together and played on the existing
+Bally Midway MCR hardware.
+
+The vector game was seen as having possible delays, and due to the fact that
+the game *had* to be completed by the time the film premiered, the other team
+got the job.  Due to hardware and time constraints, it was decided that one of
+the games should be removed from the TRON game, possibly for a sequel...
+
+Controls: Trigger joystick, encoder wheel, 1p and 2p buttons
+
+
+=============
+Discs of Tron
+=============
+
+This was the fifth game that was supposed to be in Tron, but was moved off and
+later made into this excellent sequel.  In this game, your object is to throw
+discs at Sark in an attempt to knock him off his disc(s) before he knocks you
+off yours.
+
+This game came in a dedicated upright, a Tron conversion, or the infamous
+"environmental" cabinet.  This cabinet was made to STAND in.  Unlike the
+uprights, the environmental (or booth) version had speech effects, along with
+surround sound and a lot of lighting effects.  And for the record, the
+environmental cabinet CANNOT be dismantled for ease of transportation (well,
+it CAN be dismantled, but was not designed so). 
+
+Controls (environmental): Trigger joystick w/thumb button,
+                          tri-level encoder wheel, start game
+Controls (upright): Trigger joystick w/thumb buttons, tri-level encoder wheel,
+                    1p and 2p buttons.
+
+There is a ROM difference between the upright and environmental games.
+The main difference between these two were:
+
+1) The upright had no speech, special audio effects, or lighting effects.
+   Apparently, some of the later versions DID have the speech boards added in.
+2) The upright could support two player games
+
+There are TWO versions of the Discs of Tron upright ROMs.  One has an 
+additional "Derez a Discs - 2000" on the scoring screen, and has less test 
+options/text.  If you have this version, please contact me! - Mark Jenison
+
+=========
+Solar Fox
+=========
+    
+The player controls a space ship with the purpose being to "clear the
+playfield" of targets either by shooting them or running them over.  There
+are enemy turrets moving back and forth on each wall around the perimeter of
+the grid that shoot at you.  They can be STUNNED, but not killed.  There also
+some bad guys in the arena with you.  There is a timer, and if you clear the
+screen with time left, then there is a bonus score added.
+
+Controls: Trigger joystick, a "fast" button, 1p and 2p buttons.
+
+==========
+Two Tigers
+==========
+
+Air-sea battle game.  You fly a plane which is attacking a battleship.  The
+object is to put holes in the ships hull by using bombs and by causing
+enemy planes to crash into it.
+
+In a two-player game, you can either play with or against the other player.  If
+you play against the other player, you must first have a dog fight.  Whoever
+wins the dogfight gets first shot at the other players ship, and you alternate
+attacking and defending each others ship.
+
+Controls:  
+There were different configurations for this game.  The dedicated cabinet had
+flight yoke controls, whereas the Tron conversion had encoder wheels.  Fire
+and bomb buttons, 1P and 2P buttons.
+
+==============
+Satan's Hollow
+==============
+
+You are pitted against Satan himself!  The ultimate battle between evil and...
+technology?  Your ship must fight off waves of attacking demons while
+attempting to build a bridge to the devil himself!
+
+Controls: Trigger joystick, 1p and 2p buttons.
+
+======
+Timber
+======
+
+You control a lumberjack who must cut down his quota of trees to make the boss
+happy.  There are bonus rounds where you must balance on floating log for
+points.
+
+Controls: joystick for movement and a two-way joystick (with only one
+switch) for chopping, 1p, 2p
+
+==========
+Spy Hunter
+==========
+
+This game is best known for it's dramatic "Peter Gunn" sound track that played
+during the game.  You are a spy, driving a James Bond type car which is fully
+equiped with machine guns at the start.  Bad guys in black cars will try to
+stop you by shooting at you, bombing you, slashing your tires, or knocking you
+off the road.  Fortunately, a weapons van will come by from
+time to time to give you additional weapons to fight these bad guys, such as
+smoke screens, oil slicks, or ground-to-air missiles.
+
+Controls:  A flight yoke type steering wheel.  A trigger
+           and thumb button for each side, and a button in the middle
+           which called the van when flashing.  Also a start button, 
+           high/low shifter, and gas pedal
+
+===
+NFL
+===
+
+A laser-disk football game.
+
+From Mike Treu's Laser FAQ part 2
+
+From what I've gathered; so far, you play coach and select plays with
+real NFL teams.  The control panel has two sets of 6 buttons (one for each
+player), that uses little half football dividers, so the other player
+cannot see your decisions; and there is a star button (throws a
+star-player in the game).  That's all I know.
+
+From David Shuman's LaserHead FAQ 0.4
+
+Game using real NFL footage. 
+
+From what I've gathered; so far, you play coach and select plays with real NFL
+teams. The control panel has two sets of 6 buttons (one for each player), that
+uses little half football dividers, so the other player cannot see your
+decisions; and there is a star button (throws a star-player in the game).
+That's all I know. 
+
+RCA SJT-400 video-disc player. (It's an IEEE interface ?). This is not a
+standard laser disk. 
+
+=======
+Journey
+=======
+
+The only game based on a super group from the '80s!  Based on the Journey
+Escape album, you control each of the four band members, each whom have to
+retrieve their lost items on a specific screen.
+
+Neil Schon  - must use his jet pack to navigate a cavern to get his guitar
+Jonathan Cain - must work his way downscreen while jumping over barriers.
+Steve Perry - must walk through swinging gates to get his microphone
+Ross Valory - must retrieve his bass guitar and avoid flying records.
+Steve Smith - must bounce his way across the screen of drums to his drum set.
+              After he uses a drum to bounce, it disappears.
+
+When all four members have retrieved their items, they hold a concert!  As a
+security guard, you must keep the crowd from reaching the stage for extra
+bonus points!  Once the fans reach the stage, the four must retrieve their
+items once again.  
+
+During each screen, a Journey song is played.  This is one of the
+games which used the infamous cassette tape mechanism for music. 
+
+Chris Smith (cjsmith@amoco.com) is working on a more detailed Journey FAQ.
+
+Controls: joystick, 1p, 2p and action buttons.
+
+==========
+Domino Man
+==========
+
+You must set up a chain of dominos on the screen while keeping
+people and objects from knocking it down.  Set up the entire chain (as
+displayed by dots on the ground) and you finish the round.
+
+Controls: joystick, place button, 1p and 2p buttons.
+
+======
+Tapper
+======
+
+You are a bartender who must serve all thirsty customers before they get to the
+end of the bar.  Toss a frosty one down the bar to oncoming patrons.  Pick up
+tips for extra points.  Customers return mugs by sliding them back down the
+bar.  Catch the empty mugs before they slide off the bar and break!
+
+There were two versions of Tapper: Rootbeer Tapper and Tapper.  Both were
+produced side by side, with Rootbeer Tapper geared to the arcades and Tapper
+geared towards bars/taverns.  The Tapper cabinet has brass-like drink holders,
+foot rest and promoted Budweiser.
+
+There also exists a Sega board which plays "Suntory" Tapper (Suntory is a
+Japanese liquor company, I believe), which is Tapper with different
+graphics and most likely different music.  I have no information about
+this hardware, but wouldn't mind being contacted about the details of the
+ROMS (if Sega re-engineered the hardware and kept the ROMS the same, it
+may be possible to play Suntory Tapper on regular MCR hardware.)
+
+Controls: joystick, and tapper handle, 1p, 2p
+
+=====
+Wacko
+===== 
+
+You are in a spaceship and must shoot two alike space creatures
+to destroy them (one shot stops it, and if the next shot hits it's match,
+both are destroyed.
+
+This is a very bizzarre cabinet, as the entire thing is "slanted".  This
+includes the control panel and the marquee.
+
+Controls: Trigger joystick, 1p, 2p
+
+================
+Demolition Derby
+================
+
+You control a junker car in a demolition derby.  Avoid getting your radiator
+hit.  Pick up wrenches, screwdrivers and keys to gain repair bonuses.
+
+This came in both upright and 4-player stand-around models. 
+
+Demolition Derby came in two board formats: MCR system (3 board sandwich),
+and a Mono-board.  Apparently later in the development cycle, they decided
+to condense the 3 board sandwich into a single board.
+
+Controls: Steering wheel and forward/reverse (two-way joystick), and start
+button for each player.
+
+=====
+Sarge
+=====
+
+Sarge is a war game where you control tanks or helicopters.  Battle the
+enemy by destroying his tanks and helicopters.  
+
+Sarge is another of the MCR games which game in two different formats: 
+either the three board sandwich MCR III set-up, or the mono-board setup.
+
+Controls: tank controls (2 two-way joysticks, with fire/bomb triggers), and
+          a "switch" button (to switch between tank or helicopter control).
+
+==============
+Kozmik Krooz'r
+==============
+
+Also an MCRII game.  You pilot a spaceship which must dock with the
+mothership while avoiding enemies.
+
+Controls: Encoder wheel which can be pressed down, a joystick with zap
+          button.
+
+**********************
+IV. Game Board Mapping
+**********************
+
+X - all versions
+U - upright only
+S - special (sitdown or booth)
+
+
+     board|| MCR   | MCR II|MCR III|| SSI/O || MCR II|MCR III|
+          || CPU   | CPU   | 5MHZ  || (PAN) || Video | Video |
+Game      ||       |       | CPU   ||       ||  Gen  |  Gen  |
+----------++-------+-------+-------++-------++-------+-------+
+Solar Fox ||   X   |       |       ||   X   ||   X   |       |
+----------++-------+-------+-------++-------++-------+-------+
+Kick      ||   X   |       |       ||   X   ||   X   |       |
+----------++-------+-------+-------++-------++-------+-------+
+Kozmik Krz||       |   X   |       ||   X   ||   X   |       |
+----------++-------+-------+-------++-------++-------+-------+
+Tron      ||       |   X   |       ||   X   ||   X   |       |
+----------++-------+-------+-------++-------++-------+-------+
+Timber    ||       |   X   |       ||   X   ||   X   |       |
+----------++-------+-------+-------++-------++-------+-------+
+Kickman   ||       |   X   |       ||   X   ||   X   |       |
+----------++-------+-------+-------++-------++-------+-------+
+S. Hollow ||       |   X   |       ||   X   ||   X   |       |
+----------++-------+-------+-------++-------++-------+-------+
+Two Tigers||       |   X   |       ||   X   ||   X   |       |
+----------++-------+-------+-------++-------++-------+-------+
+Wacko     ||       |   X   |       ||   X   ||   X   |       |
+----------++-------+-------+-------++-------++-------+-------+
+Domino Man||       |   X   |       ||   X   ||   X   |       |
+----------++-------+-------+-------++-------++-------+-------+
+Discs/Tron||       |       |   X   || U,(S) ||       |   X   |
+----------++-------+-------+-------++-------++-------+-------+
+Tapper    ||       |       |   X   ||  (X)  ||       |   X   |
+----------++-------+-------+-------++-------++-------+-------+
+Journey   ||       |       |   X   ||   X   ||       |   X   |
+----------++-------+-------+-------++-------++-------+-------+
+Spy Hunter||       |       |   X   || U,(S) ||       |   X   |
+----------++-------+-------+-------++-------++-------+-------+
+NFL       ||       |       |   X   ||   X   ||       |   X   |
+----------++-------+-------+-------++-------++-------+-------+
+Sarge     ||       |       |   X   ||   X   ||       |   X   |
+----------++-------+-------+-------++-------++-------+-------+
+I believe this table alone will point out the conversion class
+possibilities.
+
+********************
+V. Related Documents
+********************
+
+1. MCR series pinout page
+   http://www.tc.umn.edu/~johns594/arcade/tech/mcr.html
+
+****************
+VI. Contributors
+****************
+
+Clay Cowgill 
+Mark Jenison 
+Rick Schieve 
+Christopher T. Kuntz 
+Bill Esquivel 
+Greg Kam 
+Al McCormick 
+John Morrison 
+Gaymond Lee 
+Chris Smith 
+Jeff Peters 
+
+************
+VII. History
+************
+
+Version 1.0 - Initial version
+Version 1.1 - Clay's updates
+Version 1.2  - Added History section
+               Updated some e-mail addresses
+               Added Kosmik Krooz'r
+               Added Suntory Tapper to Tapper section
+               Added SSIO Test ROM information
+               Removed conversion class section
+               Misc other fixes
+Version 1.3    Added info about other Discs of Tron upright ROM version
+               Misc other fixes
+               Updated e-mail addresses
+               Added Sarge info
+Version 1.4	Remove e-mail addresses
+		Fixed gameboard mapping
+
+
+</pre> 				<!-- END CONTENT -->
+				</td>
+			</tr>
+		</tbody></table>
+		<br>
+		<!-- end table --></td>
+		<td width="7" bgcolor="#FFFFFF">&nbsp;</td>
+	</tr>
+	<!-- end of endsidebar -->
+	<!-- Bottom menu links -->
+	<tr>
+		<td colspan="4" class="light">
+		<p align="center" class="bmenu"><br>
+		<a href="https://www.mikesarcade.com/arcade/index.html">Home</a>&nbsp; |&nbsp;
+		<a href="https://www.mikesarcade.com/cgi-bin/store.pl">Online Store</a>&nbsp; |&nbsp;
+		<a href="https://www.mikesarcade.com/arcade/repair.html">Repair Logs</a>&nbsp; |&nbsp;
+		<a href="https://www.mikesarcade.com/arcade/manuals.html">Manuals and Schematics</a>&nbsp; |&nbsp;
+		<a href="https://www.mikesarcade.com/arcade/monitors.html">Monitor Manuals</a>&nbsp; |&nbsp;
+		<a href="https://www.mikesarcade.com/arcade/components.html">Component Markings</a>&nbsp; |&nbsp;
+		<a href="https://www.mikesarcade.com/arcade/links.html">Links</a>
+		<!-- &nbsp; |&nbsp;<a href="http://www.vaps.org/members/ut/mhaaland@mikesarcade.com.html">My Collection</a> -->
+		<br>
+		<br>
+		All Content Copyright © 2000-2024 by
+		<a href="https://www.mikesarcade.com/cgi-bin/store.pl?action=url&amp;page=contact.html">MikesArcade.com</a>
+		</p>
+		</td>
+	</tr>
+	<!-- End of bottom hot links -->
+</tbody></table>
+<br>
+</center>
+
+
+
+
+ </body></html>
