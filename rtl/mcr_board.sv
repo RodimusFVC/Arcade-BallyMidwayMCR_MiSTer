@@ -7,7 +7,7 @@
 //  (tools/mra_cfg.py). Shared CPUs / sound chips and ROM storage live here (chip pool convention,
 //  rtl/chip_pool_pkg.sv); boards in rtl/boards/ drive them through bus ports.
 //
-//  Boards so far: CPU board (90010 / 91490 decode, timing, background, palette), 91399 and 91464 sprite boards, SSIO.
+//  Boards so far: CPU board (90009 / 90010 / 91490 decode, timing, background, palette), 91399 and 91464 sprite boards, SSIO.
 //
 //  Clock: clk = 80 MHz. ce_pix = clk / 8 = 10 MHz (board 9.984 MHz), ce_cpu = clk / 32 = 2.5 MHz (2.496), 91490:
 //  clk / 16 = 5 MHz (MAME 5 MHz);
@@ -182,7 +182,6 @@ module mcr_board
 
     /////////////////////////////  Boards  /////////////////////////////
 
-    wire [2:0] r3, g3, b3;
     wire [31:0] ssio_cmd;
     wire  [7:0] op4, ssio_status;
     wire        cpu_wd;
@@ -202,7 +201,7 @@ module mcr_board
     mcr_cpu cpu
     (
         .clk(clk), .reset(reset), .pause(pause), .ce_cpu(ce_cpu), .ce_pix(ce_pix), .pix_phase(phase[2:0]),
-        .board(cfg_cpu[1:0]), .spr_91464(spr_64), .bg32k(cfg_xoffs[3]),
+        .board(cfg_cpu[1:0]), .dpoker(cfg_io == 8'd3), .spr_91464(spr_64), .bg32k(cfg_xoffs[3]),
         .z80_0_i(cpu_z80_0_i), .z80_0_o(z80_0_o),
         .rom0_a(rom0_a), .rom0_d(rom0_d), .rom1_a(rom1_a), .rom1_d(rom1_d), .rom1b_a(rom1b_a), .rom1b_d(rom1b_d),
         .ip0(ip0), .ip1(ip1), .ip2(ip2), .ip3(ip3), .ip4(ip4),
@@ -211,7 +210,7 @@ module mcr_board
         .nv_addr(nv_addr), .nv_din(nv_din), .nv_we(nv_we), .nv_dout(nv_dout),
         .crt_flip(crt_flip), .mirror_x(mirror_x), .mirror_y(mirror_y), .h_adj(h_adj), .v_adj(v_adj),
         .ras_h(ras_h), .ras_line(ras_line), .ras_field(ras_field), .spr_ra(spr_ra), .spr_rd(spr_rd), .spix(spix),
-        .video_r(r3), .video_g(g3), .video_b(b3),
+        .video_r(video_r), .video_g(video_g), .video_b(video_b),
         .video_hs(video_hs), .video_vs(video_vs), .video_hblank(video_hblank), .video_vblank(video_vblank),
         .video_field(video_field),
         .wd_reset(cpu_wd)
@@ -242,10 +241,6 @@ module mcr_board
         .audio_l(audio_l), .audio_r(audio_r)
     );
 
-    // 3-bit resistor ladder (2K / 1K / 510) -> 8 bits, as MAME pal3bit
-    assign video_r = {r3, r3, r3[2:1]};
-    assign video_g = {g3, g3, g3[2:1]};
-    assign video_b = {b3, b3, b3[2:1]};
 
 
 endmodule

@@ -3,7 +3,7 @@
 //  MCR CPU board: Z80 bus decode, RAMs, Z80 CTC, watchdog, raster timing, background tiles, palette
 //  Copyright (C) 2026 Rodimus
 //
-//  Boards: 90010 Super CPU (MCR II) and 91490 (MCR III, no schematic: MAME). 90009 / 91475 come later.
+//  Boards: 90009 (MCR I), 90010 Super CPU (MCR II) and 91490 (MCR III, no schematic: MAME). 91475 comes later.
 //  Facts: Claude/mcr_schematic_facts.md (Part A = 90010 schematic) and MAME bally/mcr.cpp, mcr_v.cpp.
 //
 //  90010 memory (MAME cpu_90010_map, schematic SEL0-5):
@@ -11,6 +11,9 @@
 //    E000-E1FF sprite RAM, mirrored over E000-E7FF / F000-F7FF (A11 = 0)
 //    E800-EFFF video RAM, mirrored at F800 (A11 = 1); writes to its top 128 bytes also set the 64 x 9 palette
 //      (entry = offset[6:1], bit 8 = A0)
+//  90009 memory (MAME cpu_90009_map, schematic p19-20): 0000-6FFF ROM, 7000-77FF battery RAM (mirror 7800),
+//    F000-F1FF sprite RAM (mirror F200), F400-F7FF palette low byte {B, G}, F800-FBFF palette high byte {-, R}
+//    (32 x 12 bits, write only, entry = A[4:0]), FC00-FFFF video RAM (1 byte per tile). Draw Poker: 8000-81FF RAM.
 //  91490 memory (MAME cpu_91490_map): 0000-DFFF ROM, E000-E7FF battery RAM, E800-E9FF sprite RAM (mirror EA00),
 //    F000-F7FF video RAM, F800-FFFF palette (write only, entry = A[6:1], bit 8 = A0). Unmapped reads FF.
 //  I/O (low 8 bits, both boards): 00-04 read SSIO input ports IP0-IP4 (mirror 18), 07 read SSIO status, 00-03 write output
@@ -27,7 +30,8 @@ module mcr_cpu
     input             reset,
     input             pause,
     input             ce_cpu,         // 2.5 MHz (90010), 5 MHz (91490)
-    input       [1:0] board,          // cfg byte 148: 1 = 90010, 3 = 91490
+    input       [1:0] board,          // cfg byte 148: 0 = 90009, 1 = 90010, 3 = 91490
+    input             dpoker,         // cfg byte 151 = 3: Draw Poker meter RAM at 8000-81FF
     input             spr_91464,      // cfg byte 149: sprite colour from the sprite board, not the tile
     input             bg32k,          // cfg byte 152 [3]: background ROM 32K (91490: 10-bit tile codes)
     input             ce_pix,         // 10 MHz, the last clock of each pixel slot
@@ -72,9 +76,9 @@ module mcr_cpu
     output      [7:0] spr_rd,
     input       [7:0] spix,           // 91399: {0, VID3-0}; 91464: {COL3-0, VID3-0}
 
-    output reg  [2:0] video_r,
-    output reg  [2:0] video_g,
-    output reg  [2:0] video_b,
+    output reg  [7:0] video_r,
+    output reg  [7:0] video_g,
+    output reg  [7:0] video_b,
     output            video_hs,
     output            video_vs,
     output reg        video_hblank,
@@ -138,12 +142,37 @@ module mcr_cpu
     wire inta_l = iorq && m1;
     wire fetch  = m1 && mreq && rd && !rfsh;
 
+    wire mcr1    = (board == 2'd0);
     wire mcr3    = (board == 2'd3);
-    wire cs_rom  = mcr3 ? (A[15:13] != 3'b111)  : (A[15:14] != 2'b11);          // 0000-DFFF / 0000-BFFF
-    wire cs_nv   = mcr3 ? (A[15:11] == 5'b11100) : (A[15:13] == 3'b110);        // E000-E7FF / C000-DFFF
-    wire cs_spr  = mcr3 ? (A[15:10] == 6'b111010) : ((A[15:13] == 3'b111) && !A[11]);
-    wire cs_vram = mcr3 ? (A[15:11] == 5'b11110) : ((A[15:13] == 3'b111) &&  A[11]);
-    wire cs_pal  = mcr3 ? (A[15:11] == 5'b11111) : (cs_vram && (A[10:7] == 4'hF));
+    reg  cs_rom, cs_nv, cs_spr, cs_vram, cs_pal;
+    always @(*) begin
+        case (board)
+            2'd0: begin                                                          // 90009
+                cs_rom  = (A[15:12] < 4'h7);                                     // 0000-6FFF
+                cs_nv   = (A[15:12] == 4'h7);                                    // 7000-7FFF
+                cs_spr  = (A[15:10] == 6'b111100);                               // F000-F3FF
+                cs_vram = (A[15:10] == 6'b111111);                               // FC00-FFFF
+                cs_pal  = 1'b0;                                                  // F400-FBFF: pal1 below
+            end
+            2'd3: begin                                                          // 91490
+                cs_rom  = (A[15:13] != 3'b111);                                  // 0000-DFFF
+                cs_nv   = (A[15:11] == 5'b11100);                                // E000-E7FF
+                cs_spr  = (A[15:10] == 6'b111010);                               // E800-EBFF
+                cs_vram = (A[15:11] == 5'b11110);                                // F000-F7FF
+                cs_pal  = (A[15:11] == 5'b11111);                                // F800-FFFF
+            end
+            default: begin                                                       // 90010
+                cs_rom  = (A[15:14] != 2'b11);                                   // 0000-BFFF
+                cs_nv   = (A[15:13] == 3'b110);                                  // C000-DFFF
+                cs_spr  = (A[15:13] == 3'b111) && !A[11];
+                cs_vram = (A[15:13] == 3'b111) &&  A[11];
+                cs_pal  = (A[15:13] == 3'b111) &&  A[11] && (A[10:7] == 4'hF);
+            end
+        endcase
+    end
+    wire cs_pal1l = mcr1 && (A[15:10] == 6'b111101);                             // 90009 F400-F7FF
+    wire cs_pal1h = mcr1 && (A[15:10] == 6'b111110);                             // 90009 F800-FBFF
+    wire cs_meter = mcr1 && dpoker && (A[15:9] == 7'b1000000);                   // Draw Poker 8000-81FF
 
     // end-of-cycle strobes (from the LaserdiscGames LD-V1000 firmware board)
     reg  [7:0] ba_q, bd_q;
@@ -180,12 +209,17 @@ module mcr_cpu
     end
 
     // ------------------------------------------------------------ RAMs
-    wire [7:0] nv_q, spr_q, vram_q;
+    // battery RAM is stored inverted on both ports, so an unloaded (zeroed) block reads FF, as MAME's nvram
+    // DEFAULT_ALL_1. On all-zero RAM Solar Fox builds garbage tables (wrong coin screen, sprites written over the
+    // palette, crash on coin); .nvm files keep the true byte values.
+    wire [7:0] nv_q, spr_q, vram_q, nv_qi, nv_douti;
     dpram_dc #(.widthad_a(11)) u_nvram
     (
-        .clock_a(clk), .address_a(A[10:0]), .data_a(dout), .wren_a(mem_wr && cs_nv), .q_a(nv_q),
-        .clock_b(clk), .address_b(nv_addr), .data_b(nv_din), .wren_b(nv_we), .q_b(nv_dout)
+        .clock_a(clk), .address_a(A[10:0]), .data_a(~dout), .wren_a(mem_wr && cs_nv), .q_a(nv_qi),
+        .clock_b(clk), .address_b(nv_addr), .data_b(~nv_din), .wren_b(nv_we), .q_b(nv_douti)
     );
+    assign nv_q    = ~nv_qi;
+    assign nv_dout = ~nv_douti;
     dpram_dc #(.widthad_a(9)) u_spriteram       // port B: the sprite board
     (
         .clock_a(clk), .address_a(A[8:0]), .data_a(dout), .wren_a(mem_wr && cs_spr), .q_a(spr_q),
@@ -199,10 +233,25 @@ module mcr_cpu
         .clock_b(clk), .address_b(vaddr), .data_b(8'h00), .wren_b(1'b0), .q_b(vq)
     );
 
+    wire [7:0] meter_q;
+    dpram_dc #(.widthad_a(9)) u_meter
+    (
+        .clock_a(clk), .address_a(A[8:0]), .data_a(dout), .wren_a(mem_wr && cs_meter), .q_a(meter_q),
+        .clock_b(clk), .address_b(9'd0), .data_b(8'h00), .wren_b(1'b0), .q_b()
+    );
+
     // palette: 64 x 9 (93419), bit 8 = A0; 90010: written through the top 128 bytes of video RAM, 91490: F800-FFFF
     reg [8:0] pal [64];
     always @(posedge clk)
         if (mem_wr && cs_pal) pal[A[6:1]] <= {A[0], dout};
+
+    // 90009 palette: 32 x 12 (7489 x 6), 4 bits per gun (MAME xRBG_444): low byte {B, G}, high byte {-, R}
+    reg [7:0] pal1l [32];
+    reg [3:0] pal1h [32];
+    always @(posedge clk) begin
+        if (mem_wr && cs_pal1l) pal1l[A[4:0]] <= dout;
+        if (mem_wr && cs_pal1h) pal1h[A[4:0]] <= dout[3:0];
+    end
 
     assign rom0_a = A;
 
@@ -251,6 +300,7 @@ module mcr_cpu
             else if (cs_nv)   di = nv_q;
             else if (cs_spr)  di = spr_q;
             else if (cs_vram) di = vram_q;
+            else if (cs_meter) di = meter_q;
         end else if (io_rd) begin
             if (io_ssio) begin
                 case (A[2:0])
@@ -274,7 +324,9 @@ module mcr_cpu
     assign z80_0_i.nmi_n   = 1'b1;
     assign z80_0_i.di      = di;
 
-    // ------------------------------------------------------------ background (90010, 91490)
+    // ------------------------------------------------------------ background (90009, 90010, 91490)
+    // 90009 (mcr_90009_get_tile_info): 1 byte per tile = code, no flips, colour 0, sprite colour base 0x10;
+    // 4K ROM halves.
     // 32 x 30 tiles, 2 bytes each (MAME mcr_90010_get_tile_info): code = [8:0], H flip [9], V flip [10],
     // colour [12:11], sprite colour bank [15:14]. 91490 (mcr_91490_get_tile_info): code = [9:0], H flip [10],
     // V flip [11], colour [13:12], [15:14] unused (the 91464 colours its sprites). Tiles are 8 x 8 drawn 2 x 2
@@ -291,23 +343,26 @@ module mcr_cpu
     reg  [1:0] pxk;
     always @(posedge clk) begin
         case (pix_phase)
-            3'd0: vaddr <= {sy[8:4], sx[8:4], 1'b0};
-            3'd2: begin lo <= vq; vaddr[0] <= 1'b1; end
+            3'd0: vaddr <= mcr1 ? {1'b1, sy[8:4], sx[8:4]} : {sy[8:4], sx[8:4], 1'b0};   // 90009: FC00 = A10 set
+            3'd2: begin lo <= vq; if (!mcr1) vaddr[0] <= 1'b1; end
             3'd4: begin : tile
                 reg [2:0] px, py;
                 reg [9:0] code;
-                px   = sx[3:1] ^ {3{mcr3 ? vq[2] : vq[1]}};
-                py   = sy[3:1] ^ {3{mcr3 ? vq[3] : vq[2]}};
-                code = mcr3 ? {vq[1:0], lo} : {1'b0, vq[0], lo};
-                if (mcr3 && bg32k) begin
+                px   = sx[3:1] ^ {3{mcr3 ? vq[2] : mcr1 ? 1'b0 : vq[1]}};
+                py   = sy[3:1] ^ {3{mcr3 ? vq[3] : mcr1 ? 1'b0 : vq[2]}};
+                code = mcr3 ? {vq[1:0], lo} : mcr1 ? {2'b00, vq} : {1'b0, vq[0], lo};
+                if (mcr1) begin
+                    rom1_a  <= {3'b000, code[7:0], py, px[2]};  // low half (gfx1 0000-0FFF)
+                    rom1b_a <= {3'b001, code[7:0], py, px[2]};  // high half (gfx1 1000-1FFF)
+                end else if (mcr3 && bg32k) begin
                     rom1_a  <= {1'b0, code, py, px[2]};     // low half (gfx1 0000-3FFF)
                     rom1b_a <= {1'b1, code, py, px[2]};     // high half (gfx1 4000-7FFF)
                 end else begin
                     rom1_a  <= {2'b00, code[8:0], py, px[2]};   // low half (gfx1 0000-1FFF)
                     rom1b_a <= {2'b01, code[8:0], py, px[2]};   // high half (gfx1 2000-3FFF)
                 end
-                col_grp <= mcr3 ? vq[5:4] : vq[4:3];
-                spr_bank <= vq[7:6];
+                col_grp <= mcr3 ? vq[5:4] : mcr1 ? 2'b00 : vq[4:3];
+                spr_bank <= mcr1 ? 2'b01 : vq[7:6];
                 pxk     <= px[1:0];
             end
             default: ;
@@ -320,18 +375,25 @@ module mcr_cpu
     wire [2:0] bit_hi = 3'd7 - {pxk, 1'b0};
     wire [3:0] pix = {rom1b_d[bit_hi], rom1b_d[bit_hi - 3'd1], rom1_d[bit_hi], rom1_d[bit_hi - 3'd1]};
     wire [1:0] sbank = spr_91464 ? spix[5:4] : spr_bank;
-    wire [8:0] pcol = (spix[2:0] != 3'd0) ? pal[{sbank, spix[3:0]}] : pal[{col_grp, pix}];
+    wire [5:0] pidx = (spix[2:0] != 3'd0) ? {sbank, spix[3:0]} : {col_grp, pix};
+    wire [8:0] pcol = pal[pidx];
+    wire [11:0] pcol1 = {pal1h[pidx[4:0]], pal1l[pidx[4:0]]};   // {R, B, G}
     reg  [8:0] pcol_q;
-    always @(posedge clk) if (pix_phase == 3'd6) pcol_q <= pcol;
+    reg [11:0] pcol1_q;
+    always @(posedge clk) if (pix_phase == 3'd6) begin pcol_q <= pcol; pcol1_q <= pcol1; end
 
     always @(posedge clk) begin
         if (ce_pix) begin
             video_hblank <= hblank;
             video_vblank <= vblank;
             if (hblank || vblank) begin
-                video_r <= 3'd0; video_g <= 3'd0; video_b <= 3'd0;
-            end else begin
-                video_r <= pcol_q[8:6]; video_g <= pcol_q[2:0]; video_b <= pcol_q[5:3];
+                video_r <= 8'd0; video_g <= 8'd0; video_b <= 8'd0;
+            end else if (mcr1) begin                        // 4-bit guns -> 8 bits, as MAME pal4bit
+                video_r <= {2{pcol1_q[11:8]}}; video_g <= {2{pcol1_q[3:0]}}; video_b <= {2{pcol1_q[7:4]}};
+            end else begin                                  // 3-bit resistor ladder -> 8 bits, as MAME pal3bit
+                video_r <= {pcol_q[8:6], pcol_q[8:6], pcol_q[8:7]};
+                video_g <= {pcol_q[2:0], pcol_q[2:0], pcol_q[2:1]};
+                video_b <= {pcol_q[5:3], pcol_q[5:3], pcol_q[5:4]};
             end
         end
     end

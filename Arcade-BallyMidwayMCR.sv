@@ -380,8 +380,10 @@ mcr_board board
 	.nv_dout(ioctl_din),
 
 	.crt_flip(status[22]),
-	.mirror_x(game_flags[1]),
-	.mirror_y(game_flags[2]),
+	// byte 1 mirrors are on the screen after MAME's axis swap; the board mirrors the raw picture, which
+	// screen_rotate then turns, so a vertical set's screen X mirror is the board's Y mirror and vice versa
+	.mirror_x(game_vert ? game_flags[2] : game_flags[1]),
+	.mirror_y(game_vert ? game_flags[1] : game_flags[2]),
 	.h_adj(status[40:37]),
 	.v_adj(status[44:41]),
 
