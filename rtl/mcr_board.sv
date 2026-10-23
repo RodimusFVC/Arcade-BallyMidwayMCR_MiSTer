@@ -43,6 +43,8 @@ module mcr_board
     output      [7:0] nv_dout,
 
     input             crt_flip,
+    input             mirror_x,       // cfg byte 1 [1]
+    input             mirror_y,       // cfg byte 1 [2]
     input       [3:0] h_adj,
     input       [3:0] v_adj,
 
@@ -207,7 +209,7 @@ module mcr_board
         .ssio_status(ssio_status),
         .ssio_cmd(ssio_cmd), .op0(op0), .op4(op4),
         .nv_addr(nv_addr), .nv_din(nv_din), .nv_we(nv_we), .nv_dout(nv_dout),
-        .crt_flip(crt_flip), .h_adj(h_adj), .v_adj(v_adj),
+        .crt_flip(crt_flip), .mirror_x(mirror_x), .mirror_y(mirror_y), .h_adj(h_adj), .v_adj(v_adj),
         .ras_h(ras_h), .ras_line(ras_line), .ras_field(ras_field), .spr_ra(spr_ra), .spr_rd(spr_rd), .spix(spix),
         .video_r(r3), .video_g(g3), .video_b(b3),
         .video_hs(video_hs), .video_vs(video_vs), .video_hblank(video_hblank), .video_vblank(video_vblank),
@@ -219,14 +221,14 @@ module mcr_board
     vgen_91399 vgen
     (
         .clk(clk), .reset(reset), .ce_pix(ce_pix), .pix_phase(phase[2:0]),
-        .h(ras_h), .line(ras_line), .field(ras_field), .cocktail(op0[6]), .crt_flip(crt_flip), .xoffs(cfg_xoffs[1:0]),
+        .h(ras_h), .line(ras_line), .field(ras_field), .cocktail(op0[6]), .flip_x(crt_flip ^ mirror_x), .flip_y(crt_flip ^ mirror_y), .xoffs(cfg_xoffs[1:0]),
         .spr_a(spr_ra_99), .spr_d(spr_rd), .rom_a(rom3_a_99), .rom_d(rom3_d), .spix(spix_99)
     );
 
     vgen_91464 vgen3
     (
         .clk(clk), .reset(reset), .ce_pix(ce_pix), .pix_phase(phase[2:0]),
-        .h(ras_h), .line(ras_line), .field(ras_field), .cocktail(op0[6]), .crt_flip(crt_flip), .rom128(cfg_xoffs[5]),
+        .h(ras_h), .line(ras_line), .field(ras_field), .cocktail(op0[6]), .flip_x(crt_flip ^ mirror_x), .flip_y(crt_flip ^ mirror_y), .rom128(cfg_xoffs[5]),
         .spr_a(spr_ra_64), .spr_d(spr_rd), .rom_a(rom3_a_64), .rom_d(rom3_d), .spix(spix_64)
     );
 

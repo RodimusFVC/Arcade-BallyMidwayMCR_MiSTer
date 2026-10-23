@@ -380,6 +380,8 @@ mcr_board board
 	.nv_dout(ioctl_din),
 
 	.crt_flip(status[22]),
+	.mirror_x(game_flags[1]),
+	.mirror_y(game_flags[2]),
 	.h_adj(status[40:37]),
 	.v_adj(status[44:41]),
 

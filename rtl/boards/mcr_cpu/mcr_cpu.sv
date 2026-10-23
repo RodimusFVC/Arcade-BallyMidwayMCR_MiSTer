@@ -59,6 +59,8 @@ module mcr_cpu
     output      [7:0] nv_dout,
 
     input             crt_flip,
+    input             mirror_x,       // cfg byte 1 [1]: picture mirrored left-right (MAME ORIENTATION_FLIP_X)
+    input             mirror_y,       // cfg byte 1 [2]: picture mirrored top-bottom
     input       [3:0] h_adj,
     input       [3:0] v_adj,
 
@@ -280,9 +282,9 @@ module mcr_cpu
     // 1-0 = low half, MSB first). Halves of 8K (code mod 512), or 16K with a 32K ROM (code mod 1024).
     // One pixel per 8-clock slot: video RAM low / high byte, then both ROM halves at once (rom1 ports B and A).
     wire       flip = op0[6] ^ crt_flip;
-    wire [8:0] sx = flip ? ~h[8:0] : h[8:0];
+    wire [8:0] sx = (flip ^ mirror_x) ? ~h[8:0] : h[8:0];
     wire [8:0] vy = {line, field};
-    wire [8:0] sy = flip ? (9'd479 - vy) : vy;
+    wire [8:0] sy = (flip ^ mirror_y) ? (9'd479 - vy) : vy;
 
     reg  [7:0] lo;
     reg  [1:0] col_grp, spr_bank;

@@ -28,7 +28,8 @@ module vgen_91399
     input       [7:0] line,
     input             field,
     input             cocktail,       // output port 0 D6
-    input             crt_flip,       // core option: whole picture mirrored
+    input             flip_x,         // picture mirrored left-right (core flip option ^ set mirror X)
+    input             flip_y,         // picture mirrored top-bottom (core flip option ^ set mirror Y)
     input       [1:0] xoffs,          // byte 152: [0] +16 normal, [1] +16 cocktail
 
     output reg  [8:0] spr_a,          // sprite RAM read (CPU board port B)
@@ -61,8 +62,8 @@ module vgen_91399
     wire [7:0] ds_q = sel ? b0_qa : b1_qa;
 
     // ------------------------------------------------------------ display side: read, then clear the word
-    wire [8:0] xs   = crt_flip ? ~h[8:0] : h[8:0];          // buffer position of this screen pixel
-    wire       last = xs[0] ^ crt_flip;                     // second pixel of the word on this line
+    wire [8:0] xs   = flip_x ? ~h[8:0] : h[8:0];          // buffer position of this screen pixel
+    wire       last = xs[0] ^ flip_x;                     // second pixel of the word on this line
     always @(posedge clk) begin
         ds_clr <= 1'b0;
         case (pix_phase)
@@ -80,7 +81,7 @@ module vgen_91399
     wire [7:0] last_line = field ? 8'd254 : 8'd255;
     wire       wrap      = (line == last_line);
     wire [8:0] y_next    = wrap ? {8'd0, ~field} : {line + 8'd1, field};
-    wire [8:0] ty_w      = crt_flip ? (9'd479 - y_next) : y_next;
+    wire [8:0] ty_w      = flip_y ? (9'd479 - y_next) : y_next;
 
     localparam S_IDLE = 3'd0, S_Y = 3'd1, S_CODE = 3'd2, S_X = 3'd3, S_ROM = 3'd4, S_WAIT = 3'd5, S_RMW = 3'd6;
     reg  [2:0] st;
