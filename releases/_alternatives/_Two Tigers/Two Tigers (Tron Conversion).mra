@@ -50,7 +50,7 @@
         <part crc="9b22697b" name="2tgrfg3.bin"/>
     </rom>
 
-    <!-- Index 1: set id, flags, port idle levels, DIP sources, input map, board config bytes 148-157 (tools/mra_cfg.py) -->
+    <!-- Index 1: set id, flags, port idle levels, DIP sources, input map, board config bytes 148-163 (tools/mra_cfg.py) -->
     <rom index="1">
         <part>
             13 00 00 00 FF 00 FF FF 00 FF FF FF 80 80 80 80
@@ -62,7 +62,8 @@
             04 05 06 07 00 01 02 03 04 05 06 07 00 01 02 03
             04 05 06 07 00 01 02 03 04 05 06 07 00 01 02 03
             04 05 06 07 00 01 02 03 04 05 06 07 00 01 02 03
-            04 05 06 07 01 00 11 00 04 11 00 19 00 00
+            04 05 06 07 01 00 11 00 04 11 00 19 00 00 0D 00
+            0D 0A 00 0A
         </part>
     </rom>
 

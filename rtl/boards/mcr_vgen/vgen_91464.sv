@@ -37,7 +37,14 @@ module vgen_91464
     output reg [16:0] rom_a,          // rom3 (sprites)
     input       [7:0] rom_d,
 
-    output reg  [7:0] spix            // {COL3-0, VID3-0} for slot h, valid from phase 5 (same timing as the 91399)
+    output reg  [7:0] spix,           // {COL3-0, VID3-0} for slot h, valid from phase 5 (same timing as the 91399)
+
+    // line buffers 0 / 1 (shared with the other sprite board, rtl/mcr_board.sv): port A reads, port B writes
+    output      [8:0] lb_aa [2],
+    input       [7:0] lb_qa [2],
+    output      [8:0] lb_ab [2],
+    output      [7:0] lb_db [2],
+    output            lb_web [2]
 );
 
     // ------------------------------------------------------------ line buffers (2 x 512 pixels)
@@ -45,19 +52,15 @@ module vgen_91464
     reg  [8:0] dr_wa, ds_a;
     reg  [7:0] dr_wd;
     reg        dr_we, ds_clr;
-    wire [7:0] b0_qa, b1_qa;
-    dpram_dc #(.widthad_a(9)) lb0
-    (
-        .clock_a(clk), .address_a(ds_a), .data_a(8'h00), .wren_a(1'b0), .q_a(b0_qa),
-        .clock_b(clk), .address_b(sel ? ds_a : dr_wa), .data_b(sel ? 8'h00 : dr_wd),
-        .wren_b(sel ? ds_clr : dr_we), .q_b()
-    );
-    dpram_dc #(.widthad_a(9)) lb1
-    (
-        .clock_a(clk), .address_a(ds_a), .data_a(8'h00), .wren_a(1'b0), .q_a(b1_qa),
-        .clock_b(clk), .address_b(sel ? dr_wa : ds_a), .data_b(sel ? dr_wd : 8'h00),
-        .wren_b(sel ? dr_we : ds_clr), .q_b()
-    );
+    wire [7:0] b0_qa = lb_qa[0], b1_qa = lb_qa[1];
+    assign lb_aa[0]  = ds_a;
+    assign lb_ab[0]  = sel ? ds_a : dr_wa;
+    assign lb_db[0]  = sel ? 8'h00 : dr_wd;
+    assign lb_web[0] = sel ? ds_clr : dr_we;
+    assign lb_aa[1]  = ds_a;
+    assign lb_ab[1]  = sel ? dr_wa : ds_a;
+    assign lb_db[1]  = sel ? dr_wd : 8'h00;
+    assign lb_web[1] = sel ? dr_we : ds_clr;
     wire [7:0] ds_q = sel ? b0_qa : b1_qa;
 
     // ------------------------------------------------------------ display side: read, then clear the pixel

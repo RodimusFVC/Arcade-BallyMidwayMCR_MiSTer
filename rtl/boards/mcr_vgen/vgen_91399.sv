@@ -37,27 +37,30 @@ module vgen_91399
     output reg [16:0] rom_a,          // rom3 (sprites)
     input       [7:0] rom_d,
 
-    output reg  [3:0] spix            // sprite pixel for slot h, valid from phase 7 (same timing as the background)
+    output reg  [3:0] spix,           // sprite pixel for slot h, valid from phase 7 (same timing as the background)
+
+    // line buffers 0 / 1 (shared with the other sprite board, rtl/mcr_board.sv): port A reads, port B writes
+    output      [8:0] lb_aa [2],
+    input       [7:0] lb_qa [2],
+    output      [8:0] lb_ab [2],
+    output      [7:0] lb_db [2],
+    output            lb_web [2]
 );
 
-    // ------------------------------------------------------------ line buffers (2 x 256 words of 2 pixels)
+    // ------------------------------------------------------------ line buffers (2 x 256 words of 2 pixels, low half)
     reg        sel;                   // buffer being drawn; ~sel is shown
     reg  [7:0] dr_ra, dr_wa, ds_a;
     reg  [7:0] dr_wd;
     reg        dr_we, ds_clr;
-    wire [7:0] b0_qa, b1_qa;
-    dpram_dc #(.widthad_a(8)) lb0
-    (
-        .clock_a(clk), .address_a(sel ? ds_a : dr_ra), .data_a(8'h00), .wren_a(1'b0), .q_a(b0_qa),
-        .clock_b(clk), .address_b(sel ? ds_a : dr_wa), .data_b(sel ? 8'h00 : dr_wd),
-        .wren_b(sel ? ds_clr : dr_we), .q_b()
-    );
-    dpram_dc #(.widthad_a(8)) lb1
-    (
-        .clock_a(clk), .address_a(sel ? dr_ra : ds_a), .data_a(8'h00), .wren_a(1'b0), .q_a(b1_qa),
-        .clock_b(clk), .address_b(sel ? dr_wa : ds_a), .data_b(sel ? dr_wd : 8'h00),
-        .wren_b(sel ? dr_we : ds_clr), .q_b()
-    );
+    wire [7:0] b0_qa = lb_qa[0], b1_qa = lb_qa[1];
+    assign lb_aa[0]  = {1'b0, sel ? ds_a : dr_ra};
+    assign lb_ab[0]  = {1'b0, sel ? ds_a : dr_wa};
+    assign lb_db[0]  = sel ? 8'h00 : dr_wd;
+    assign lb_web[0] = sel ? ds_clr : dr_we;
+    assign lb_aa[1]  = {1'b0, sel ? dr_ra : ds_a};
+    assign lb_ab[1]  = {1'b0, sel ? dr_wa : ds_a};
+    assign lb_db[1]  = sel ? dr_wd : 8'h00;
+    assign lb_web[1] = sel ? dr_we : ds_clr;
     wire [7:0] dr_q = sel ? b1_qa : b0_qa;
     wire [7:0] ds_q = sel ? b0_qa : b1_qa;
 

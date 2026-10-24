@@ -1,6 +1,7 @@
 set_global_assignment -name SYSTEMVERILOG_FILE rtl/chip_pool_pkg.sv
 set_global_assignment -name SYSTEMVERILOG_FILE Arcade-BallyMidwayMCR.sv
 set_global_assignment -name SYSTEMVERILOG_FILE rtl/mcr_board.sv
+set_global_assignment -name SYSTEMVERILOG_FILE rtl/mcr_inputs.sv
 
 set_global_assignment -name SYSTEMVERILOG_FILE rtl/boards/mcr_cpu/mcr_cpu.sv
 set_global_assignment -name SYSTEMVERILOG_FILE rtl/boards/mcr_cpu/mcr_timing.sv

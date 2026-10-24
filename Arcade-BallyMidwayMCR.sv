@@ -86,16 +86,17 @@ assign BUTTONS = 0;
 //   bytes 12-19 per port: DIP switch byte that supplies it (bit 7 set = none, use the idle byte)
 //   bytes 20-83 input map, one byte per port bit (bit 0 first): control id, 0 = none; a pressed control inverts its bit
 //   bytes 84-147 per port bit: which bit of its DIP switch byte supplies it
-//   bytes 148-157 board config: CPU board, sprite board, sound, game I/O, sprite offsets, analog x3, stick range
+//   bytes 148-163 board config: CPU board, sprite board, sound, game I/O, sprite offsets, analog x3, stick range,
+//               analog sensitivity x3, key delta x3
 reg [7:0] game_var    = 8'd0;
 reg [7:0] game_flags  = 8'h00;
-reg [7:0] cfg[10]     = '{8'd1,8'd0,8'd0,8'd0,8'd0,8'd0,8'd0,8'd0,8'd0,8'd0};
+reg [7:0] cfg[16]     = '{8'd1,8'd0,8'd0,8'd0,8'd0,8'd0,8'd0,8'd0,8'd0,8'd0,8'd0,8'd0,8'd0,8'd0,8'd0,8'd0};
 reg [5:0] in_map[64];
 reg [7:0] port_idle[8] = '{8'hFF,8'hFF,8'hFF,8'hFF,8'hFF,8'hFF,8'hFF,8'hFF};
 reg [7:0] port_dip[8]  = '{8'h80,8'h80,8'h80,8'h80,8'h80,8'h80,8'h80,8'h80};
 wire [7:0] map_idx8  = ioctl_addr[7:0] - 8'd20;    // bytes 20-83  -> 0-63
 wire [7:0] perm_idx8 = ioctl_addr[7:0] - 8'd84;    // bytes 84-147 -> 0-63
-wire [7:0] cfg_idx8  = ioctl_addr[7:0] - 8'd148;   // bytes 148-157 -> 0-9
+wire [7:0] cfg_idx8  = ioctl_addr[7:0] - 8'd148;   // bytes 148-163 -> 0-15
 wire [5:0] map_idx   = map_idx8[5:0];
 wire [5:0] perm_idx  = perm_idx8[5:0];
 wire [2:0] idle_idx  = ioctl_addr[2:0] - 3'd4;     // bytes 4-11  -> 0-7
@@ -112,7 +113,7 @@ always @(posedge CLK_SYS) begin
         if (ioctl_addr >= 25'd4  && ioctl_addr < 25'd12) port_idle[idle_idx] <= ioctl_dout;
         if (ioctl_addr >= 25'd12 && ioctl_addr < 25'd20) port_dip[dip_idx]   <= ioctl_dout;
         if (ioctl_addr >= 25'd20 && ioctl_addr < 25'd84) in_map[map_idx] <= ioctl_dout[5:0];
-        if (ioctl_addr >= 25'd148 && ioctl_addr < 25'd158) cfg[cfg_idx8[3:0]] <= ioctl_dout;
+        if (ioctl_addr >= 25'd148 && ioctl_addr < 25'd164) cfg[cfg_idx8[3:0]] <= ioctl_dout;
     end
 end
 
@@ -136,6 +137,11 @@ localparam CONF_STR = {
 	"P1O[44:41],V Position (CRT),0,+1,+2,+3,+4,+5,+6,+7,-8,-7,-6,-5,-4,-3,-2,-1;",
 	"P1OGI,Scandoubler Fx,None,HQ2x,CRT 25%,CRT 50%,CRT 75%;",
 	"-;",
+	"H1P2,Game Options;",
+	"H1P2O[47:45],Dial Sensitivity,1.0x,0.75x,0.5x,0.25x,0.125x,1.25x,1.5x,2.0x;",
+	"H1P2O[48],Dial Direction,Normal,Reversed;",
+	"H1P2O[49],Analog Stick as Dial,Rate,Wheel;",
+	"-;",
 	"P3,Pause Options;",
 	"P3OJ,Pause when OSD is open,On,Off;",
 	"P3OK,Dim video after 10s,On,Off;",
@@ -150,6 +156,13 @@ localparam CONF_STR = {
 	"V,v",`BUILD_DATE
 };
 
+// analog devices per player (MCR dials, trackballs, sticks, wheels: rtl/mcr_inputs.sv)
+wire [15:0] lstick [4], rstick [4];
+wire  [7:0] paddle [4];
+wire  [8:0] spinner [4];
+wire [24:0] ps2_mouse;
+wire        no_analog = (cfg[5] == 8'd0) && (cfg[6] == 8'd0) && (cfg[7] == 8'd0);   // hides Game Options
+
 hps_io #(.CONF_STR(CONF_STR)) hps_io
 (
 	.clk_sys(CLK_SYS),
@@ -163,7 +176,7 @@ hps_io #(.CONF_STR(CONF_STR)) hps_io
 
 	.buttons(buttons),
 	.status(status),
-	.status_menumask({direct_video}),
+	.status_menumask({no_analog, direct_video}),
 
 	.ioctl_download(ioctl_download),
 	.ioctl_upload(ioctl_upload),
@@ -179,6 +192,13 @@ hps_io #(.CONF_STR(CONF_STR)) hps_io
 	.joystick_1(joystick_1),
 	.joystick_2(joystick_2),
 	.joystick_3(joystick_3),
+	.joystick_l_analog_0(lstick[0]), .joystick_l_analog_1(lstick[1]),
+	.joystick_l_analog_2(lstick[2]), .joystick_l_analog_3(lstick[3]),
+	.joystick_r_analog_0(rstick[0]), .joystick_r_analog_1(rstick[1]),
+	.joystick_r_analog_2(rstick[2]), .joystick_r_analog_3(rstick[3]),
+	.paddle_0(paddle[0]), .paddle_1(paddle[1]), .paddle_2(paddle[2]), .paddle_3(paddle[3]),
+	.spinner_0(spinner[0]), .spinner_1(spinner[1]), .spinner_2(spinner[2]), .spinner_3(spinner[3]),
+	.ps2_mouse(ps2_mouse),
 	.ps2_key(ps2_key)
 );
 
@@ -220,6 +240,7 @@ wire reset = RESET | status[0] | buttons[1] | ioctl_download | ~locked;
 reg kb_up = 0, kb_down = 0, kb_left = 0, kb_right = 0;
 reg kb_b1 = 0, kb_b2 = 0;
 reg kb_coin1 = 0, kb_coin2 = 0, kb_start1 = 0, kb_start2 = 0, kb_pause = 0, kb_service = 0, kb_tilt = 0, kb_service1 = 0;
+reg kb_keyin = 0, kb_keyout = 0, kb_payout = 0, kb_door1o = 0, kb_door1l = 0, kb_door2o = 0, kb_door2l = 0;   // Draw Poker
 
 wire       pressed = ~ps2_key[9];
 wire [7:0] code    = ps2_key[7:0];
@@ -238,6 +259,13 @@ always @(posedge CLK_SYS) begin
 			'h3E: kb_service1 <= pressed; // 8 (service credit)
 			'h2C: kb_tilt     <= pressed; // T
 			'h4D: kb_pause    <= pressed; // P
+			'h15: kb_keyin    <= pressed; // Q  (MAME defaults for Draw Poker's keys and doors)
+			'h1D: kb_keyout   <= pressed; // W
+			'h25: kb_payout   <= pressed; // 4
+			'h1C: kb_door1o   <= pressed; // A
+			'h1B: kb_door1l   <= pressed; // S
+			'h23: kb_door2o   <= pressed; // D
+			'h2B: kb_door2l   <= pressed; // F
 
 			'h75: kb_up       <= pressed; // up
 			'h72: kb_down     <= pressed; // down
@@ -261,11 +289,24 @@ joy4way joy4way_2(.clk(CLK_SYS), .en(game_flags[0]), .in(dir2_raw), .out(dir2));
 
 wire m_pause = joystick_0[11] | kb_pause;
 
+// right analog stick as 4 directions {U, D, L, R}: the dominant axis past half deflection (a 4-way stick)
+wire [3:0] rs_dir [2];
+genvar rsi;
+generate
+	for (rsi = 0; rsi < 2; rsi = rsi + 1) begin : g_rs
+		wire signed [7:0] x = rstick[rsi][7:0], y = rstick[rsi][15:8];
+		wire [7:0] ax = x[7] ? -x : x, ay = y[7] ? -y : y;
+		wire       h  = (ax >= ay), on = (h ? ax : ay) >= 8'd64;
+		assign rs_dir[rsi] = {on && !h && y[7], on && !h && !y[7], on && h && x[7], on && h && !x[7]};
+	end
+endgenerate
+
 // control ids used by the MRA input map (tools/mra_cfg.py; Gottlieb numbering, extended for MCR)
 wire [63:0] ctl =
 {
 	4'd0,                                           // 63-60 reserved
-	7'd0,                                           // 59-53 Draw Poker coin door keys (Key In/Out, Payout, Doors): later step
+	kb_door2l, kb_door2o, kb_door1l, kb_door1o,     // 59-56 Draw Poker doors (lock / open)
+	kb_payout, kb_keyout, kb_keyin,                 // 55-53 Draw Poker payout, key out, key in
 	joystick_0[15:14],                              // 52-51 P1 Btn 8-7
 	joystick_3[5:4],                                // 50-49 P4 Btn 2-1
 	joystick_2[5],                                  // 48 P3 Btn 2
@@ -279,8 +320,8 @@ wire [63:0] ctl =
 	2'd0,                                           // 37-36 reserved
 	joystick_1[13:12],                              // 35-34 P2 Btn 6-5
 	joystick_0[13:12],                              // 33-32 P1 Btn 6-5
-	4'd0,                                           // 31-28 P2 right stick (unused on MCR)
-	4'd0,                                           // 27-24 P1 right stick (unused on MCR)
+	rs_dir[1][0], rs_dir[1][1], rs_dir[1][2], rs_dir[1][3],   // 31 P2 right stick R, 30 L, 29 D, 28 U
+	rs_dir[0][0], rs_dir[0][1], rs_dir[0][2], rs_dir[0][3],   // 27 P1 right stick R, 26 L, 25 D, 24 U (Wacko fire)
 	joystick_2[8],                                  // 23 coin 3
 	kb_service,                                     // 22 service (test switch)
 	kb_tilt,                                        // 21 tilt
@@ -368,6 +409,24 @@ mcr_board board
 	.ip3(in_port[3]),
 	.ip4(in_port[4]),
 	.ssio_dip(in_port[5]),
+	.p24(in_port[6]),
+	.p2c(in_port[7]),
+
+	.an_desc('{cfg[5], cfg[6], cfg[7]}),
+	.an_min(cfg[8]),
+	.an_max(cfg[9]),
+	.an_sens('{cfg[10], cfg[11], cfg[12]}),
+	.an_keyd('{cfg[13], cfg[14], cfg[15]}),
+	.osd_sens(status[47:45]),
+	.osd_rev(status[48]),
+	.osd_wheel(status[49]),
+	.spinner(spinner),
+	.paddle(paddle),
+	.lstick(lstick),
+	.rstick(rstick),
+	.mouse(ps2_mouse),
+	.dpad('{{dir1[3], dir1[2], dir1[1], dir1[0]}, {dir2[3], dir2[2], dir2[1], dir2[0]},
+	        joystick_2[3:0], joystick_3[3:0]}),
 
 	.ioctl_addr(ioctl_addr),
 	.ioctl_dout(ioctl_dout),

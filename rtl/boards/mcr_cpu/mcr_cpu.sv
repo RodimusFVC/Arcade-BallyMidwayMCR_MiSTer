@@ -32,6 +32,7 @@ module mcr_cpu
     input             ce_cpu,         // 2.5 MHz (90010), 5 MHz (91490)
     input       [1:0] board,          // cfg byte 148: 0 = 90009, 1 = 90010, 3 = 91490
     input             dpoker,         // cfg byte 151 = 3: Draw Poker meter RAM at 8000-81FF
+    input             twotiger,       // cfg byte 151 = 5: Two Tigers video RAM address swizzle
     input             spr_91464,      // cfg byte 149: sprite colour from the sprite board, not the tile
     input             bg32k,          // cfg byte 152 [3]: background ROM 32K (91490: 10-bit tile codes)
     input             ce_pix,         // 10 MHz, the last clock of each pixel slot
@@ -52,6 +53,8 @@ module mcr_cpu
     // SSIO side of the bus (inputs, status, latches, output ports)
     input       [7:0] ip0, ip1, ip2, ip3, ip4,
     input       [7:0] ssio_status,
+    input       [7:0] p24, p2c,       // Draw Poker: extra input ports 24 / 2C (28 reads FF)
+    output reg  [7:0] dp_out,         // Draw Poker: output port 34 (D6 hopper)
     output reg [31:0] ssio_cmd,       // command latches 1C-1F, latch n = [8n+7:8n]
     output reg  [7:0] op0,
     output reg  [7:0] op4,
@@ -166,7 +169,7 @@ module mcr_cpu
                 cs_nv   = (A[15:13] == 3'b110);                                  // C000-DFFF
                 cs_spr  = (A[15:13] == 3'b111) && !A[11];
                 cs_vram = (A[15:13] == 3'b111) &&  A[11];
-                cs_pal  = (A[15:13] == 3'b111) &&  A[11] && (A[10:7] == 4'hF);
+                cs_pal  = (A[15:13] == 3'b111) &&  A[11] && (twotiger ? (A[9:6] == 4'hF) : (A[10:7] == 4'hF));
             end
         endcase
     end
@@ -199,12 +202,13 @@ module mcr_cpu
 
     always @(posedge clk) begin
         if (reset) begin
-            op0 <= 8'h00; op4 <= 8'h00;
+            op0 <= 8'h00; op4 <= 8'h00; dp_out <= 8'h00;
             ssio_cmd <= 32'd0;
         end else if (io_wr) begin
             if (A[7:0] <= 8'h03) op0 <= dout;
             if (A[7:2] == 6'b000001) op4 <= dout;
             if (A[7:2] == 6'b000111) ssio_cmd[{A[1:0], 3'b000} +: 8] <= dout;
+            if (dpoker && A[7:0] == 8'h34) dp_out <= dout;
         end
     end
 
@@ -227,30 +231,25 @@ module mcr_cpu
     );
     reg  [10:0] vaddr;
     wire  [7:0] vq;
+    // Two Tigers (MAME twotiger_videoram_r / _w): the CPU's A10 is the RAM's A0, A9-A0 its A10-A1.
+    // Draw Poker's meter RAM (8000-81FF) uses 000-1FF: the 90009 tiles sit at 400-7FF (FC00 = A10 set).
+    wire [10:0] vram_a = cs_meter ? {2'b00, A[8:0]} : twotiger ? {A[9:0], A[10]} : A[10:0];
     dpram_dc #(.widthad_a(11)) u_videoram
     (
-        .clock_a(clk), .address_a(A[10:0]), .data_a(dout), .wren_a(mem_wr && cs_vram), .q_a(vram_q),
+        .clock_a(clk), .address_a(vram_a), .data_a(dout), .wren_a(mem_wr && (cs_vram || cs_meter)), .q_a(vram_q),
         .clock_b(clk), .address_b(vaddr), .data_b(8'h00), .wren_b(1'b0), .q_b(vq)
     );
 
-    wire [7:0] meter_q;
-    dpram_dc #(.widthad_a(9)) u_meter
-    (
-        .clock_a(clk), .address_a(A[8:0]), .data_a(dout), .wren_a(mem_wr && cs_meter), .q_a(meter_q),
-        .clock_b(clk), .address_b(9'd0), .data_b(8'h00), .wren_b(1'b0), .q_b()
-    );
-
-    // palette: 64 x 9 (93419), bit 8 = A0; 90010: written through the top 128 bytes of video RAM, 91490: F800-FFFF
-    reg [8:0] pal [64];
-    always @(posedge clk)
-        if (mem_wr && cs_pal) pal[A[6:1]] <= {A[0], dout};
-
-    // 90009 palette: 32 x 12 (7489 x 6), 4 bits per gun (MAME xRBG_444): low byte {B, G}, high byte {-, R}
-    reg [7:0] pal1l [32];
-    reg [3:0] pal1h [32];
+    // palette, one store for every CPU board: pal_l = data byte, pal_h = the rest
+    //   90010 / 91490: 64 x 9 (93419), pal_h[0] = A0; 90010 writes through the top 128 bytes of video RAM, 91490 at
+    //     F800-FFFF, Two Tigers per MAME twotiger_videoram_w
+    //   90009: 32 x 12 (7489 x 6), 4 bits per gun (MAME xRBG_444): pal_l = {B, G} (F400), pal_h = R (F800)
+    reg  [7:0] pal_l [64];
+    reg  [3:0] pal_h [64];
+    wire [5:0] pal_wa = mcr1 ? {1'b0, A[4:0]} : twotiger ? {A[10], A[5:1]} : A[6:1];
     always @(posedge clk) begin
-        if (mem_wr && cs_pal1l) pal1l[A[4:0]] <= dout;
-        if (mem_wr && cs_pal1h) pal1h[A[4:0]] <= dout[3:0];
+        if (mem_wr && (cs_pal || cs_pal1l)) pal_l[pal_wa] <= dout;
+        if (mem_wr && (cs_pal || cs_pal1h)) pal_h[pal_wa] <= mcr1 ? dout[3:0] : {3'b000, A[0]};
     end
 
     assign rom0_a = A;
@@ -300,7 +299,7 @@ module mcr_cpu
             else if (cs_nv)   di = nv_q;
             else if (cs_spr)  di = spr_q;
             else if (cs_vram) di = vram_q;
-            else if (cs_meter) di = meter_q;
+            else if (cs_meter) di = vram_q;
         end else if (io_rd) begin
             if (io_ssio) begin
                 case (A[2:0])
@@ -314,6 +313,10 @@ module mcr_cpu
                 endcase
             end else if (A[7:2] == 6'b111100)
                 di = ctc_do;
+            else if (dpoker && A[7:0] == 8'h24)
+                di = p24;
+            else if (dpoker && A[7:0] == 8'h2C)
+                di = p2c;
         end
     end
     assign cpu_di = di;
@@ -376,8 +379,8 @@ module mcr_cpu
     wire [3:0] pix = {rom1b_d[bit_hi], rom1b_d[bit_hi - 3'd1], rom1_d[bit_hi], rom1_d[bit_hi - 3'd1]};
     wire [1:0] sbank = spr_91464 ? spix[5:4] : spr_bank;
     wire [5:0] pidx = (spix[2:0] != 3'd0) ? {sbank, spix[3:0]} : {col_grp, pix};
-    wire [8:0] pcol = pal[pidx];
-    wire [11:0] pcol1 = {pal1h[pidx[4:0]], pal1l[pidx[4:0]]};   // {R, B, G}
+    wire [11:0] pcol1 = {pal_h[pidx], pal_l[pidx]};             // 90009 {R, B, G}; others: [8:0] = 9-bit entry
+    wire  [8:0] pcol  = pcol1[8:0];
     reg  [8:0] pcol_q;
     reg [11:0] pcol1_q;
     always @(posedge clk) if (pix_phase == 3'd6) begin pcol_q <= pcol; pcol1_q <= pcol1; end

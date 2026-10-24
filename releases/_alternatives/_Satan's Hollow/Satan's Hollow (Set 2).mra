@@ -57,7 +57,7 @@
         <part crc="37ea9d07" name="sh-fg.03"/>
     </rom>
 
-    <!-- Index 1: set id, flags, port idle levels, DIP sources, input map, board config bytes 148-157 (tools/mra_cfg.py) -->
+    <!-- Index 1: set id, flags, port idle levels, DIP sources, input map, board config bytes 148-163 (tools/mra_cfg.py) -->
     <rom index="1">
         <part>
             08 90 00 00 FF FF FF FD FF FF FF FF 80 80 80 00
@@ -69,7 +69,8 @@
             04 05 06 07 00 01 02 03 04 05 06 07 00 01 02 03
             04 05 06 07 00 01 02 03 04 05 06 07 00 01 02 03
             04 05 06 07 00 01 02 03 04 05 06 07 00 01 02 03
-            04 05 06 07 01 00 11 00 04 00 00 00 00 00
+            04 05 06 07 01 00 11 00 04 00 00 00 00 00 00 00
+            00 00 00 00
         </part>
     </rom>
 

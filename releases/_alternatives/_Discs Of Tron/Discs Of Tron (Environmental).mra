@@ -65,7 +65,7 @@
         <part crc="24e9618e" name="pre.u5"/>
     </rom>
 
-    <!-- Index 1: set id, flags, port idle levels, DIP sources, input map, board config bytes 148-157 (tools/mra_cfg.py) -->
+    <!-- Index 1: set id, flags, port idle levels, DIP sources, input map, board config bytes 148-163 (tools/mra_cfg.py) -->
     <rom index="1">
         <part>
             1F 02 00 00 FF 80 7F FF FF FF FF FF 80 80 00 01
@@ -77,7 +77,8 @@
             04 05 06 07 00 01 02 03 04 05 06 07 00 01 02 03
             04 05 06 07 00 01 02 03 04 05 06 07 00 01 02 03
             04 05 06 07 00 01 02 03 04 05 06 07 00 01 02 03
-            04 05 06 07 03 01 33 08 14 31 00 00 00 00
+            04 05 06 07 03 01 33 08 14 B1 00 00 00 00 40 00
+            00 0A 00 00
         </part>
     </rom>
 

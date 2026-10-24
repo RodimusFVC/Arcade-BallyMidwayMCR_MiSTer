@@ -32,6 +32,22 @@ module mcr_board
 
     input       [7:0] ip0, ip1, ip2, ip3, ip4,
     input       [7:0] ssio_dip,       // SSIO DIP switch block (sound CPU F000)
+    input       [7:0] p24, p2c,       // Draw Poker extra ports
+
+    // analog controls (rtl/mcr_inputs.sv): cfg bytes 153-163, OSD options, MiSTer devices per player
+    input       [7:0] an_desc [3],
+    input       [7:0] an_min, an_max,
+    input       [7:0] an_sens [3],
+    input       [7:0] an_keyd [3],
+    input       [2:0] osd_sens,
+    input             osd_rev,
+    input             osd_wheel,
+    input       [8:0] spinner [4],
+    input       [7:0] paddle [4],
+    input      [15:0] lstick [4],
+    input      [15:0] rstick [4],
+    input      [24:0] mouse,
+    input       [3:0] dpad [4],       // {U, D, L, R}
 
     input      [24:0] ioctl_addr,
     input       [7:0] ioctl_dout,
@@ -198,14 +214,31 @@ module mcr_board
     assign spr_ra = spr_64 ? spr_ra_64 : spr_ra_99;
     assign rom3_a = spr_64 ? rom3_a_64 : rom3_a_99;
 
+    // ------------------------------------------------------------ inputs: analog fields + per-game handlers
+    wire [7:0] dp_out;
+    wire [7:0] gip0, gip1, gip2, gip4;
+    reg        vbl_d = 1'b0;
+    always @(posedge clk) vbl_d <= video_vblank;
+    wire       fld_tick = video_vblank && !vbl_d;
+    mcr_inputs inputs
+    (
+        .clk(clk), .reset(reset), .frame(fld_tick && video_field), .fld_tick(fld_tick),
+        .io_id(cfg_io), .an_desc(an_desc), .an_min(an_min), .an_max(an_max), .an_sens(an_sens), .an_keyd(an_keyd),
+        .osd_sens(osd_sens), .osd_rev(osd_rev), .osd_wheel(osd_wheel),
+        .spinner(spinner), .paddle(paddle), .lstick(lstick), .rstick(rstick), .mouse(mouse), .dpad(dpad),
+        .op0(op0), .op4(op4), .dp_out(dp_out),
+        .ip0_i(ip0), .ip1_i(ip1), .ip2_i(ip2), .ip4_i(ip4),
+        .ip0(gip0), .ip1(gip1), .ip2(gip2), .ip4(gip4)
+    );
+
     mcr_cpu cpu
     (
         .clk(clk), .reset(reset), .pause(pause), .ce_cpu(ce_cpu), .ce_pix(ce_pix), .pix_phase(phase[2:0]),
-        .board(cfg_cpu[1:0]), .dpoker(cfg_io == 8'd3), .spr_91464(spr_64), .bg32k(cfg_xoffs[3]),
+        .board(cfg_cpu[1:0]), .dpoker(cfg_io == 8'd3), .twotiger(cfg_io == 8'd5), .spr_91464(spr_64), .bg32k(cfg_xoffs[3]),
         .z80_0_i(cpu_z80_0_i), .z80_0_o(z80_0_o),
         .rom0_a(rom0_a), .rom0_d(rom0_d), .rom1_a(rom1_a), .rom1_d(rom1_d), .rom1b_a(rom1b_a), .rom1b_d(rom1b_d),
-        .ip0(ip0), .ip1(ip1), .ip2(ip2), .ip3(ip3), .ip4(ip4),
-        .ssio_status(ssio_status),
+        .ip0(gip0), .ip1(gip1), .ip2(gip2), .ip3(ip3), .ip4(gip4),
+        .ssio_status(ssio_status), .p24(p24), .p2c(p2c), .dp_out(dp_out),
         .ssio_cmd(ssio_cmd), .op0(op0), .op4(op4),
         .nv_addr(nv_addr), .nv_din(nv_din), .nv_we(nv_we), .nv_dout(nv_dout),
         .crt_flip(crt_flip), .mirror_x(mirror_x), .mirror_y(mirror_y), .h_adj(h_adj), .v_adj(v_adj),
@@ -217,18 +250,37 @@ module mcr_board
     );
     assign wd_reset = cpu_wd;
 
+    // sprite line buffers: one pair, used by whichever sprite board the set has (the other's writes are dropped)
+    wire [8:0] lb_aa_99 [2], lb_ab_99 [2], lb_aa_64 [2], lb_ab_64 [2];
+    wire [7:0] lb_db_99 [2], lb_db_64 [2], lb_qa [2];
+    wire       lb_we_99 [2], lb_we_64 [2];
+    genvar li;
+    generate
+        for (li = 0; li < 2; li = li + 1) begin : g_lb
+            dpram_dc #(.widthad_a(9)) lb
+            (
+                .clock_a(clk), .address_a(spr_64 ? lb_aa_64[li] : lb_aa_99[li]), .data_a(8'h00), .wren_a(1'b0),
+                .q_a(lb_qa[li]),
+                .clock_b(clk), .address_b(spr_64 ? lb_ab_64[li] : lb_ab_99[li]),
+                .data_b(spr_64 ? lb_db_64[li] : lb_db_99[li]), .wren_b(spr_64 ? lb_we_64[li] : lb_we_99[li]), .q_b()
+            );
+        end
+    endgenerate
+
     vgen_91399 vgen
     (
         .clk(clk), .reset(reset), .ce_pix(ce_pix), .pix_phase(phase[2:0]),
         .h(ras_h), .line(ras_line), .field(ras_field), .cocktail(op0[6]), .flip_x(crt_flip ^ mirror_x), .flip_y(crt_flip ^ mirror_y), .xoffs(cfg_xoffs[1:0]),
-        .spr_a(spr_ra_99), .spr_d(spr_rd), .rom_a(rom3_a_99), .rom_d(rom3_d), .spix(spix_99)
+        .spr_a(spr_ra_99), .spr_d(spr_rd), .rom_a(rom3_a_99), .rom_d(rom3_d), .spix(spix_99),
+        .lb_aa(lb_aa_99), .lb_qa(lb_qa), .lb_ab(lb_ab_99), .lb_db(lb_db_99), .lb_web(lb_we_99)
     );
 
     vgen_91464 vgen3
     (
         .clk(clk), .reset(reset), .ce_pix(ce_pix), .pix_phase(phase[2:0]),
         .h(ras_h), .line(ras_line), .field(ras_field), .cocktail(op0[6]), .flip_x(crt_flip ^ mirror_x), .flip_y(crt_flip ^ mirror_y), .rom128(cfg_xoffs[5]),
-        .spr_a(spr_ra_64), .spr_d(spr_rd), .rom_a(rom3_a_64), .rom_d(rom3_d), .spix(spix_64)
+        .spr_a(spr_ra_64), .spr_d(spr_rd), .rom_a(rom3_a_64), .rom_d(rom3_d), .spix(spix_64),
+        .lb_aa(lb_aa_64), .lb_qa(lb_qa), .lb_ab(lb_ab_64), .lb_db(lb_db_64), .lb_web(lb_we_64)
     );
 
     ssio ssio

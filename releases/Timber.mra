@@ -59,7 +59,7 @@
         <part crc="244778e8" name="timfg6.bin"/>
     </rom>
 
-    <!-- Index 1: set id, flags, port idle levels, DIP sources, input map, board config bytes 148-157 (tools/mra_cfg.py) -->
+    <!-- Index 1: set id, flags, port idle levels, DIP sources, input map, board config bytes 148-163 (tools/mra_cfg.py) -->
     <rom index="1">
         <part>
             1C 01 00 00 FF FF FF FB FF FF FF FF 80 80 80 00
@@ -71,7 +71,8 @@
             04 05 06 07 00 01 02 03 04 05 06 07 00 01 02 03
             04 05 06 07 00 01 02 03 04 05 06 07 00 01 02 03
             04 05 06 07 00 01 02 03 04 05 06 07 00 01 02 03
-            04 05 06 07 03 01 11 00 28 00 00 00 00 00
+            04 05 06 07 03 01 11 00 28 00 00 00 00 00 00 00
+            00 00 00 00
         </part>
     </rom>
 

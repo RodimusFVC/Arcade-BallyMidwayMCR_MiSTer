@@ -58,7 +58,7 @@
         <part crc="91e59383" name="2900-d.1a"/>
     </rom>
 
-    <!-- Index 1: set id, flags, port idle levels, DIP sources, input map, board config bytes 148-157 (tools/mra_cfg.py) -->
+    <!-- Index 1: set id, flags, port idle levels, DIP sources, input map, board config bytes 148-163 (tools/mra_cfg.py) -->
     <rom index="1">
         <part>
             05 90 00 00 FF 00 FF BE FF FF FF FF 80 80 80 00
@@ -70,7 +70,8 @@
             04 05 06 07 00 01 02 03 04 05 06 07 00 01 02 03
             04 05 06 07 00 01 02 03 04 05 06 07 00 01 02 03
             04 05 06 07 00 01 02 03 04 05 06 07 00 01 02 03
-            04 05 06 07 00 00 01 02 02 11 00 00 00 00
+            04 05 06 07 00 00 01 02 02 11 19 00 00 00 04 04
+            00 32 32 00
         </part>
     </rom>
 
