@@ -19,3 +19,9 @@ set_global_assignment -name SYSTEMVERILOG_FILE rtl/mister_custom/controllers.sv
 # DPRAMSV-2026-10-25: VHDL dpram_dc replaced by the SystemVerilog one (same ports/generics + byteena); original:
 # set_global_assignment -name VHDL_FILE rtl/ram_rom/dpram_dc.vhd
 set_global_assignment -name SYSTEMVERILOG_FILE rtl/ram_rom/dpram_dc.sv
+
+# ART-2026-10-25: MAME artwork module (rtl/art from the Centipede master; artwork.sv + ARTGDDR plane G / ILACE)
+set_global_assignment -name SYSTEMVERILOG_FILE rtl/art/inflate.sv
+set_global_assignment -name SYSTEMVERILOG_FILE rtl/art/png_decode.sv
+set_global_assignment -name SYSTEMVERILOG_FILE rtl/art/art_resample.sv
+set_global_assignment -name SYSTEMVERILOG_FILE rtl/art/artwork.sv
