@@ -222,7 +222,9 @@ module mcr_board
     wire       fld_tick = video_vblank && !vbl_d;
     mcr_inputs inputs
     (
-        .clk(clk), .reset(reset), .frame(fld_tick && video_field), .fld_tick(fld_tick),
+        // CTL2-2026-10-25: original below (pause reaches the dials / AD sticks)
+//         .clk(clk), .reset(reset), .frame(fld_tick && video_field), .fld_tick(fld_tick),
+        .clk(clk), .reset(reset), .pause(pause), .frame(fld_tick && video_field), .fld_tick(fld_tick),
         .io_id(cfg_io), .an_desc(an_desc), .an_min(an_min), .an_max(an_max), .an_sens(an_sens), .an_keyd(an_keyd),
         .osd_sens(osd_sens), .osd_rev(osd_rev), .osd_wheel(osd_wheel),
         .spinner(spinner), .paddle(paddle), .lstick(lstick), .rstick(rstick), .mouse(mouse), .dpad(dpad),
