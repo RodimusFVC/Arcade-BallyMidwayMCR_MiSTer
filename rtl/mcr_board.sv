@@ -102,7 +102,7 @@ module mcr_board
     wire  [7:0] z80_0_do;
     wire        z80_0_m1_n, z80_0_mreq_n, z80_0_iorq_n, z80_0_rd_n, z80_0_wr_n, z80_0_rfsh_n;
 
-    T80s #(.Mode(0), .T2Write(1), .IOWait(1)) z80_0
+    t80sv_T80s #(.Mode(0), .T2Write(1), .IOWait(1)) z80_0
     (
         .RESET_n(~reset & z80_0_i.reset_n), .CLK(clk), .CEN(z80_0_i.ce), .WAIT_n(1'b1), .INT_n(z80_0_i.int_n), .NMI_n(z80_0_i.nmi_n), .BUSRQ_n(1'b1),
         .M1_n(z80_0_m1_n), .MREQ_n(z80_0_mreq_n), .IORQ_n(z80_0_iorq_n), .RD_n(z80_0_rd_n), .WR_n(z80_0_wr_n), .RFSH_n(z80_0_rfsh_n),
@@ -122,7 +122,7 @@ module mcr_board
     wire  [7:0] z80_1_do;
     wire        z80_1_m1_n, z80_1_mreq_n, z80_1_iorq_n, z80_1_rd_n, z80_1_wr_n, z80_1_rfsh_n;
 
-    T80s #(.Mode(0), .T2Write(1), .IOWait(1)) z80_1
+    t80sv_T80s #(.Mode(0), .T2Write(1), .IOWait(1)) z80_1
     (
         .RESET_n(~reset & z80_1_i.reset_n), .CLK(clk), .CEN(z80_1_i.ce), .WAIT_n(1'b1), .INT_n(z80_1_i.int_n), .NMI_n(z80_1_i.nmi_n), .BUSRQ_n(1'b1),
         .M1_n(z80_1_m1_n), .MREQ_n(z80_1_mreq_n), .IORQ_n(z80_1_iorq_n), .RD_n(z80_1_rd_n), .WR_n(z80_1_wr_n), .RFSH_n(z80_1_rfsh_n),

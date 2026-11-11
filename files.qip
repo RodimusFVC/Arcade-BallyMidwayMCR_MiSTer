@@ -10,7 +10,7 @@ set_global_assignment -name SYSTEMVERILOG_FILE rtl/boards/mcr_vgen/vgen_91464.sv
 set_global_assignment -name SYSTEMVERILOG_FILE rtl/boards/ssio/ssio.sv
 
 set_global_assignment -name SYSTEMVERILOG_FILE rtl/cpu/z80ctc/ldv_z80ctc.sv
-set_global_assignment -name QIP_FILE rtl/cpu/T80/T80.qip
+set_global_assignment -name SYSTEMVERILOG_FILE rtl/rodimus/t80sv/t80sv_all.sv
 set_global_assignment -name QIP_FILE rtl/sound/jt49/hdl/jt49.qip
 
 set_global_assignment -name VERILOG_FILE rtl/mister_custom/pause.v
